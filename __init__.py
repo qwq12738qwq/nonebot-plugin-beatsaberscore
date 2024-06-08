@@ -5,7 +5,8 @@ from pathlib import Path
 from playwright.async_api import async_playwright
 from nonebot.adapters.onebot.v11 import Bot, Event, MessageSegment
 
-url = "https://beatleader.xyz/u/76561198949185975"
+# 双引号里面的url自己加上去捏,登入自己的beatleader账号,在个人主页上的网址复制到引号里面就可以用了
+url = "  "
 
 BS_Score = on_command("BS查分", aliases={"节奏光剑查分"}, priority=10)
 
