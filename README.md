@@ -1,0 +1,2 @@
+# Nonebot_BeatSaber_BLScore
+基于Nonebot2非常简洁的BeatLeader查分
