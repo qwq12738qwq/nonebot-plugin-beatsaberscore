@@ -1,6 +1,7 @@
 # Nonebot_BeatSaber_BLScore
 ## 介绍
-基于Nonebot2非常简洁的节奏光剑BeatLeader查分
+Nonebot2非常简洁的节奏光剑BeatLeader查分
+
 基于**Playwright**制作
 
 - [ ] 支持绑定QQ号和BeatLeader用户
