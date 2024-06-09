@@ -10,7 +10,8 @@ __plugin_meta__ = PluginMetadata(
     name="BS查分",
     description="从beatleader获取个人信息并查看PP",
     type="application",
-    homepage="https://github.com/KarisAya/nonebot_plugin_setu_collection",
+    usage="BSScore"
+    homepage="https://github.com/qwq12738qwq/Nonebot_BeatSaber_BLScore",
     supported_adapters={"nonebot.adapters.onebot.v11"},
 )
 
