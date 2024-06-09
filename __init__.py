@@ -6,8 +6,7 @@ from playwright.async_api import async_playwright
 from nonebot.adapters.onebot.v11 import Bot, Event, MessageSegment
 from nonebot.plugin import PluginMetadata
 
-__plugin_meta__ = PluginMetadata
-(
+__plugin_meta__ = PluginMetadata(
     name="BS查分",
     description="从beatleader获取个人信息并查看PP",
     type="application",
