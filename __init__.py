@@ -4,6 +4,16 @@ from nonebot import on_command
 from pathlib import Path
 from playwright.async_api import async_playwright
 from nonebot.adapters.onebot.v11 import Bot, Event, MessageSegment
+from nonebot.plugin import PluginMetadata
+
+__plugin_meta__ = PluginMetadata
+(
+    name="BS查分",
+    description="从beatleader获取个人信息并查看PP",
+    type="application",
+    homepage="https://github.com/KarisAya/nonebot_plugin_setu_collection",
+    supported_adapters={"nonebot.adapters.onebot.v11"},
+)
 
 # 双引号里面的url自己加上去捏,登入自己的beatleader账号,在个人主页上的网址复制到引号里面就可以用了
 url = "  "
