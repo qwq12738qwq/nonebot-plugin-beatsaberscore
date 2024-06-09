@@ -6,6 +6,6 @@ Nonebot2非常简洁的节奏光剑BeatLeader查分
 
 - [ ] 支持绑定QQ号和BeatLeader用户
 - [ ] 支持查询BeatLeader用户的id
-- [ ] 之后考虑支持ScoreSaber查分?........
+- [ ] 之后考虑支持ScoreSaber查分?........(其实自己换上去也一样)
 
 新手第一个代码,用来练手的罢了QAQ,新手代码懒轻喷.....
