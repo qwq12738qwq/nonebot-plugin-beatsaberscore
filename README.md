@@ -1,4 +1,4 @@
-# Nonebot_BeatSaber_BLScore
+# nonebot-plugin-beatsaberscore
 ## 介绍
 Nonebot2非常简洁的节奏光剑BeatLeader查分
 
