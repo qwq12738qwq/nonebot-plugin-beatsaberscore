@@ -19,7 +19,6 @@ __plugin_meta__ = PluginMetadata(
 )
 
 # 双引号里面的url自己加上去捏,登入自己的beatleader账号,在个人主页上的网址复制到引号里面就可以用了
-url = "https://beatleader.xyz/u/76561198949185975"
 URL = "https://beatleader.xyz/u/"
 
 BS_Score = on_command("BS查分", aliases={"节奏光剑查分"}, priority=10)
