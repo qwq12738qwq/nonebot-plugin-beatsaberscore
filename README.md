@@ -6,6 +6,6 @@ Nonebot2非常简洁的节奏光剑BeatLeader查分
 
 - [x] 支持QQ号和BeatLeader用户绑定
 
-**重做查分的插件,数据来源beatleader.xyz**
+- [] **重做查分的插件,数据来源beatleader.xyz**
 
 新手第一个代码,用来练手的罢了QAQ,新手代码懒轻喷.....
