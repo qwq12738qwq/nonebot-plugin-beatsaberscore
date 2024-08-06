@@ -2,7 +2,7 @@
 ## 介绍
 Nonebot2非常简洁的节奏光剑BeatLeader查分
 
-基于**Playwright**制作(已经寄力)
+基于**Playwright**(已经寄力)
 
 - [x] 支持QQ号和BeatLeader用户绑定
 
