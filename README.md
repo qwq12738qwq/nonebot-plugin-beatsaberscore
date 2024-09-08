@@ -22,4 +22,5 @@ Nonebot2的节奏光剑BeatLeader查分
 
 ## Q & A
 Q: 查分图为什么不用nonebot-plugin-htmlrender渲染
-A: `写到一半才知道这个`,以后会重新用nonebot-plugin-htmlrender渲染的
+
+A: `写到一半才知道这个`,以后会修改,使用用nonebot-plugin-htmlrender渲染的
