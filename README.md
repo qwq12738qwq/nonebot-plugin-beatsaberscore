@@ -21,8 +21,3 @@ Nonebot2的节奏光剑BeatLeader查分
 - [ ] 定时推送beatsaver的新曲,使用nonebot-plugin-htmlrender渲染新曲图片
 - [ ] 会添加ScoreSaber的查分支持
 - [ ] 查分图使用nonebot-plugin-htmlrender渲染
-
-## Q & A
-Q: 查分图为什么不用nonebot-plugin-htmlrender渲染
-
-A: **写到一半才知道这个**,以后会重写一次QAQ
