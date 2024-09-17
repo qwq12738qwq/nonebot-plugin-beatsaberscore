@@ -17,7 +17,7 @@ Nonebot2的节奏光剑BeatLeader查分
 
 
 ## ✨ 未来规划
-- [ ] 添加更多响应规则
-- [ ] 定时推送beatsaver的新曲,使用nonebot-plugin-htmlrender渲染新曲图片
-- [ ] 会添加ScoreSaber的查分支持
-- [ ] 查分图使用nonebot-plugin-htmlrender渲染
+- [ ] 定时推送beatsaver的新曲,渲染新曲图片
+- [ ] 添加更细致的响应规则
+- [ ] 添加对ScoreSaber的查分支持
+
