@@ -1,3 +1,7 @@
+<div align="center">
+  <a><img src='./NoneBot.png' height='300' alt="logo"></a>
+</div>
+
 # nonebot-plugin-beatsaberscore
 ## 📖 介绍
 
