@@ -1,5 +1,5 @@
 <div align="center">
-  <a><img src='./NoneBot.png' width='1000' height='300' alt="logo"></a>
+
 </div>
 # nonebot-plugin-beatsaberscore
 ## 📖 介绍
@@ -7,7 +7,7 @@
 Nonebot2的节奏光剑BeatLeader查分
 
   直接上效果图(●′ω`●)
-  <a><img src='./result.png'></a>
+<img src='./result.png'>
 
 ## 💿 安装
 
