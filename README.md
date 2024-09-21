@@ -1,5 +1,5 @@
 <div align="center">
-  <a><img src='./NoneBot.png' width='1000' height='300' alt="logo"></a>
+  <a><img src='./NoneBot.png' alt="logo"></a>
 </div>
 # nonebot-plugin-beatsaberscore
 ## 📖 介绍
