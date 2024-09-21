@@ -1,15 +1,13 @@
 <div align="center">
-  <a><img src='./NoneBot.png' height='300' alt="logo"></a>
+  <a><img src='./NoneBot.png' width='1000' height='300' alt="logo"></a>
 </div>
-
 # nonebot-plugin-beatsaberscore
 ## 📖 介绍
 
 Nonebot2的节奏光剑BeatLeader查分
 
-**基于beatleader.xyz重新编写BS查分,并把歌曲数据以重绘形式列出**(快完成力)
-
-通过`beatleader.xyz`获取PP分数和各种数据
+直接上效果图(●′ω`●)
+<a><img src='./result.png'></a>
 
 ## 💿 安装
 
