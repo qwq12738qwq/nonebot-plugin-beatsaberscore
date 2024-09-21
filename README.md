@@ -6,8 +6,8 @@
 
 Nonebot2的节奏光剑BeatLeader查分
 
-直接上效果图(●′ω`●)
-<a><img src='./result.png'></a>
+  直接上效果图(●′ω`●)
+  <a><img src='./result.png'></a>
 
 ## 💿 安装
 
