@@ -1,6 +1,8 @@
 <div align="center">
   <a><img src='./NoneBot.png' alt="logo"></a>
 </div>
+
+
 # nonebot-plugin-beatsaberscore
 ## 📖 介绍
 
@@ -13,6 +15,12 @@ Nonebot2的节奏光剑BeatLeader查分
 
 ## ⚙️ 配置
 
+| 配置项 | 必填 | 默认值 | 说明 |
+|:-----:|:----:|:----:|:----:|
+| BS_RETRIES | 否 | 8 | 网络错误重试次数 |
+| BS_TIMEOUT | 否 | 5 |网络超时时间 |
+
+PS:最好是有科学上网,如果没有,BS_RETRIES向建议调至6以上
 
 ## 🎉 使用
 
