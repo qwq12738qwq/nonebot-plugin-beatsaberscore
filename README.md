@@ -1,13 +1,12 @@
 <div align="center">
-
+  <a><img src='./NoneBot.png' width='1000' height='300' alt="logo"></a>
 </div>
 # nonebot-plugin-beatsaberscore
 ## 📖 介绍
 
 Nonebot2的节奏光剑BeatLeader查分
 
-  直接上效果图(●′ω`●)
-<img src='./result.png'>
+
 
 ## 💿 安装
 
@@ -24,3 +23,6 @@ Nonebot2的节奏光剑BeatLeader查分
 - [ ] 歌曲的推荐
 - [ ] 添加对ScoreSaber的查分支持
 
+
+最后,效果图(●′ω`●)
+<img src='./result.png'>
