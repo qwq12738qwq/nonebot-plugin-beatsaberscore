@@ -5,9 +5,10 @@
 <p>
 
 <div align="center">
-
+  
   **nonebot-plugin-beatsaberscore**
-
+  
+</div>
   
 ## 📖 介绍
 
