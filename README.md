@@ -107,10 +107,7 @@ PS:最好是有科学上网,如果没有,BS_RETRIES向建议调至6以上
 
 ### [Nonebot框架](https://github.com/nonebot/nonebot2)
 
-
-
-
-还有身边的一位大佬,没有他这个查分图就会变得十分甚至九分难看(悲)
+**还有身边的一位大佬,没有他这个查分图就会变得十分甚至九分难看(悲)**
 
 At last,效果图(●′ω`●)
 <img src='./result.png'>
