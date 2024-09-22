@@ -6,8 +6,9 @@ from . import api
 from . import draw
 from . import save
 
+__version__ = "0.9.0"
 __plugin_meta__ = PluginMetadata(
-    name="nonebot-plugin-beatsaberscore",
+    name="Beat Saber查分器",
     description="Nonebot2的Beat Saber查分器",
     type="application",
     usage="BS score, BS bind, BS help",
