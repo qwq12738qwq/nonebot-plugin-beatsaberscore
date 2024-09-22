@@ -65,12 +65,12 @@ PS:最好是有科学上网,如果没有,BS_RETRIES向建议调至6以上
 
 **beatleaderID是什么?**
 
- 在登入beatleader.xyz后打开个人信息
+ 在登入` beatleader.xyz `后打开个人信息
  
  <img src='./explanation.png'>
  
- 这个就是你的beatleaderID辣
- (说人话也就是SteamID)
+ 这个就是你的` beatleaderID `辣
+ (说人话也就是` SteamID `)
 
 ## ✨ 未来规划
 - [ ] 定时推送beatsaver的新曲,渲染新曲图片
