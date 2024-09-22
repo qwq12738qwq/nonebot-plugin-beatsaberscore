@@ -12,9 +12,9 @@
   
 ## 📖 介绍
 
-Nonebot2的节奏光剑BeatLeader查分
+Nonebot2的节奏光剑BeatLeader查分(ﾉ≧∀≦)ﾉ
 
-_(介绍没啥好写的)_
+~~完全不需要介绍)~~
 
 ## 💿 安装(以下选择其一安装即可)
 <details open>
