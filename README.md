@@ -4,7 +4,7 @@
 </div>
 <p>
   
-# nonebot-plugin-beatsaberscore
+#    nonebot-plugin-beatsaberscore
   
 ## 📖 介绍
 
@@ -25,7 +25,9 @@ Nonebot2的节奏光剑BeatLeader查分
 PS:最好是有科学上网,如果没有,BS_RETRIES向建议调至6以上
 
 ## 🎉 使用
-BS bind绑定beatleaderID后,输入BS score就可以查分了
+可以发送` BS help `或` BS帮助 `获取帮助(其实也就导航到这里力)
+
+` BS bind `绑定beatleaderID后,输入` BS score `就可以查分了
 
 也可以输入` BS绑定 `绑定beatleaderID,` BS查分 `用于触发查分的指令
 
@@ -49,5 +51,8 @@ BS bind绑定beatleaderID后,输入BS score就可以查分了
 ### 0.9.0
 - 完成基础的beatleader查分
 
+
+
 最后,效果图(●′ω`●)
 <img src='./result.png'>
+enjoy~
