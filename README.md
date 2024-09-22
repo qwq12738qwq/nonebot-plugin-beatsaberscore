@@ -10,10 +10,38 @@
 
 Nonebot2的节奏光剑BeatLeader查分
 
+_(介绍没啥好写的)_
 
+## 💿 安装(以下选择其一安装即可)
+<details open>
+<summary>使用 nb-cli 安装</summary>
+在 nonebot2 项目的根目录下打开命令行, 输入以下指令即可安装
+  
+    nb plugin install nonebot-plugin-beatsaberscore
 
-## 💿 安装
+</details>
 
+<details open>
+<summary>使用 pip 安装</summary>
+在 nonebot2 项目的根目录下打开命令行, 输入以下指令即可安装
+  
+    pip install nonebot-plugin-beatsaberscore
+
+</details>
+
+>如果你的Nonebot2项目下已经启用虚拟环境,可以使用Pipenv安装到项目中,但你需要安装pipenv包
+>
+<details open>
+<summary>使用 pipenv 安装</summary>
+先安装pipenv
+  
+    pip install pipenv
+  
+在 nonebot2 项目的根目录下打开命令行, 输入以下指令即可安装
+  
+    pipenv install nonebot-plugin-beatsaberscore
+
+</details>
 
 ## ⚙️ 配置
 
