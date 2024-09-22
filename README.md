@@ -93,6 +93,8 @@ PS:最好是有科学上网,如果没有,BS_RETRIES向建议调至6以上
 
 如果你有更好的想法或者修改代码的建议,随时欢迎提出issues(●´∀｀●)
 
+可以的话,给个小小的star~,你的star会让我获得happy buff♪（＾∀＾●）ﾉｼ
+
 At last,效果图(●′ω`●)
 <img src='./result.png'>
 enjoy~
