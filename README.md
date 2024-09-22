@@ -31,6 +31,8 @@ Nonebot2的节奏光剑BeatLeader查分(ﾉ≧∀≦)ﾉ
   
     pip install nonebot-plugin-beatsaberscore
 
+如果安装完插件不载入的话,在nonebot文件夹中找到**pyproject.toml**,在**plugins**里面添加**nonebot-plugin-beatsaberscore**就完成了
+
 </details>
 
 >如果你的Nonebot2项目下已经启用虚拟环境,可以使用Pipenv安装到项目中,但你需要安装pipenv包
