@@ -3,8 +3,10 @@
   <a><img src='./Nonebot.png' alt="logo"></a>
 </div>
 <p>
-  
-#    nonebot-plugin-beatsaberscore
+
+<p align="center">
+  **nonebot-plugin-beatsaberscore**
+</p>
   
 ## 📖 介绍
 
