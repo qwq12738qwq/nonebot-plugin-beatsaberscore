@@ -18,7 +18,7 @@ Nonebot2的节奏光剑BeatLeader查分(ﾉ≧∀≦)ﾉ
 
 ## 💿 安装(以下选择其一安装即可)
 <details open>
-<summary>使用 nb-cli 安装</summary>
+<summary>使用 nb-cli 安装 (十分甚至九分的推荐)</summary>
 在 nonebot2 项目的根目录下打开命令行, 输入以下指令即可安装
   
     nb plugin install nonebot-plugin-beatsaberscore
