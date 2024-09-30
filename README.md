@@ -75,8 +75,9 @@ PS:最好是有科学上网,如果没有,BS_RETRIES向建议调至6以上
  
  <img src='./explanation.png'>
  
- 这个就是你的` beatleaderID `辣
+ 这个就是你的` beatleaderID `辣,
  (说人话也就是` SteamID `)
+即使ID不是纯数字也是可以用的
 
 ## ✨ 未来规划
 - [ ] 定时推送beatsaver的新曲,渲染新曲图片
