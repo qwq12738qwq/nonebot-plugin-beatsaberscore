@@ -6,7 +6,7 @@
 
 <div align="center">
   
-  **nonebot-plugin-beatsaberscore**
+暗色模式有惊喜
   
 </div>
   
