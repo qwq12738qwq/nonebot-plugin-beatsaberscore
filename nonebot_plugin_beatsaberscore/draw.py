@@ -225,34 +225,12 @@ async def draw_image(scores_total,player_total,cache_dir,cache_file):
     i = -1
     for difficulty in song_difficulty:
         difficulty_icon_size = (180, 150)
-        # 判断难度
-        if difficulty == 'Easy':
-            open_easy_icon = Image.open(f'{Path(__file__).parent}/static/easy.png').convert('RGBA')
-            copy_easy_icon = open_easy_icon.copy()
-            copy_easy_icon = copy_easy_icon.resize(difficulty_icon_size)
-            background_image.paste(copy_easy_icon, (x_difficulty + image_size[0] - difficulty_icon_size[0],  y_difficulty + image_size[1] - difficulty_icon_size[1]), copy_easy_icon)
-        elif difficulty == 'Normal':
-            open_normal_icon = Image.open(f'{Path(__file__).parent}/static/normal.png').convert('RGBA')
-            copy_normal_icon = open_normal_icon.copy()
-            copy_normal_icon = copy_normal_icon.resize(difficulty_icon_size)
-            background_image.paste(copy_normal_icon, (x_difficulty + image_size[0] - difficulty_icon_size[0],  y_difficulty + image_size[1] - difficulty_icon_size[1]), copy_normal_icon)
-        elif difficulty == 'Hard':
-            open_hard_icon = Image.open(f'{Path(__file__).parent}/static/hard.png').convert('RGBA')
-            copy_hard_icon = open_hard_icon.copy()
-            copy_hard_icon = copy_hard_icon.resize(difficulty_icon_size)
-            background_image.paste(copy_hard_icon, (x_difficulty + image_size[0] - difficulty_icon_size[0],  y_difficulty + image_size[1] - difficulty_icon_size[1]), copy_hard_icon)
-        elif difficulty == 'Expert':
-            open_expert_icon = Image.open(f'{Path(__file__).parent}/static/expert.png').convert('RGBA')
-            copy_expert_icon = open_expert_icon.copy()
-            copy_expert_icon = copy_expert_icon.resize(difficulty_icon_size)
-            background_image.paste(copy_expert_icon, (x_difficulty + image_size[0] - difficulty_icon_size[0],  y_difficulty + image_size[1] - difficulty_icon_size[1]), copy_expert_icon)
-        elif difficulty == 'ExpertPlus':
-            open_expertplus_icon = Image.open(f'{Path(__file__).parent}/static/expertplus.png').convert('RGBA')
-            copy_expertplus_icon = open_expertplus_icon.copy()
-            copy_expertplus_icon = copy_expertplus_icon.resize(difficulty_icon_size)
-            background_image.paste(copy_expertplus_icon, (x_difficulty + image_size[0] - difficulty_icon_size[0],  y_difficulty + image_size[1] - difficulty_icon_size[1]), copy_expertplus_icon)
-        else:
-            pass
+        # 星评难度图标
+        open_difficulty_icon = Image.open(f'{Path(__file__).parent}/static/{difficulty}.png').convert('RGBA')
+        copy_difficulty_icon = open_difficulty_icon.copy()
+        copy_difficulty_icon = copy_difficulty_icon.resize(difficulty_icon_size)
+        background_image.paste(copy_difficulty_icon, (x_difficulty + image_size[0] - difficulty_icon_size[0],  y_difficulty + image_size[1] - difficulty_icon_size[1]), copy_difficulty_icon)
+
         # 绘制星评
         difficulty_size = 50
         font_difficulty = loading_font.font_loader(font_size = difficulty_size)
@@ -271,7 +249,7 @@ async def draw_image(scores_total,player_total,cache_dir,cache_file):
         project_size = 80
         font_difficulty = loading_font.font_loader(font_size = project_size)
         information = str('nonebot-plugin-beatsaberscore By qwq12738qwq')
-        bs_draw.text(((background_image_size[0] // 2) - len(information) * project_size, background_image_size[1] - project_size), information, font=font_difficulty, fill=(44, 106, 163))
+        bs_draw.text(((background_image_size[0] // 2) - len(information) - 800, background_image_size[1] - project_size), information, font=font_difficulty, fill=(44, 106, 163))
 
     background_image.save(f'{cache_dir}/BS_cache.png')
     with open(cache_file, "rb") as image_file:

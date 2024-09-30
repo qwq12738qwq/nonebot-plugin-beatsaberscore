@@ -1,16 +1,9 @@
 import json
-import subprocess
 from nonebot import on_command
-from nonebot.log import logger
 from nonebot.adapters.onebot.v11 import Bot, Event, MessageSegment
 from nonebot.plugin import PluginMetadata
 from nonebot import require
-try:
-    require('nonebot_plugin_localstore')
-except RuntimeError:
-    subprocess.run('nb plugin install nonebot-plugin-localstore', shell=True)
-    require('nonebot_plugin_localstore')
-    logger.info('nonebot_plugin_localstore依赖已经成功安装')
+require('nonebot_plugin_localstore')
 import nonebot_plugin_localstore as store
 from . import api
 from . import draw
