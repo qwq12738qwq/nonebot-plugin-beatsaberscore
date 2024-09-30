@@ -5,6 +5,7 @@ from nonebot.plugin import PluginMetadata
 from nonebot import require
 require('nonebot_plugin_localstore')
 import nonebot_plugin_localstore as store
+from .config import Config
 from . import api
 from . import draw
 from . import save
@@ -14,10 +15,12 @@ __plugin_meta__ = PluginMetadata(
     name="Beat Saber查分器",
     description="Nonebot2的节奏光剑查分插件,支持beatleader查分",
     type="application",
+    config=Config,
     usage="BS score, BS bind, BS help",
     homepage="https://github.com/qwq12738qwq/nonebot-plugin-beatsaberscore",
     supported_adapters={"~onebot.v11"},
 )
+
 
 
 BS_Score = on_command('BS score', aliases={'节奏光剑查分', 'BS查分'}, priority=10)

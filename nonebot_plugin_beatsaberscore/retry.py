@@ -1,9 +1,9 @@
 import httpx
 import asyncio
-from .config import config
+from .config import BS_RETRIES, BS_TIMEOUT
 from nonebot.log import logger
 
-async def time_out_retry(url, retries = config.BS_retries, timeout = config.BS_timeout, params = None):
+async def time_out_retry(url, retries = BS_RETRIES, timeout = BS_TIMEOUT, params = None):
     attempt = 0
     while attempt < retries:
         try:
