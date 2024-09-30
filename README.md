@@ -53,9 +53,9 @@ Nonebot2的节奏光剑BeatLeader查分(ﾉ≧∀≦)ﾉ
 
 | 配置项 | 必填 | 默认值 | 说明 |
 |:-----:|:----:|:----:|:----:|
-| bs_retries | 否 | 8 | 网络错误重试次数 |
-| bs_timeout | 否 | 5 | 网络超时时间 |
-| command_start | 否 | [] | 响应前缀设置 |
+| BS_RETRIES | 否 | 8 | 网络错误重试次数 |
+| BS_TIMEOUT | 否 | 5 | 网络超时时间 |
+| COMMAND_START | 否 | [] | 响应前缀设置 |
 
 PS:最好是有科学上网,如果没有,BS_RETRIES向建议调至6以上
 
