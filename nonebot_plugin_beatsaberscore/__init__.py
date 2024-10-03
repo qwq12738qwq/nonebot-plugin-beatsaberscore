@@ -1,14 +1,13 @@
+import os
 import json
 from nonebot import on_command
-from nonebot.adapters.onebot.v11 import Bot, Event, MessageSegment
+from nonebot.adapters.onebot.v11 import Bot, Event, Message, MessageSegment, GroupMessageEvent
 from nonebot.plugin import PluginMetadata
 from nonebot import require
 require('nonebot_plugin_localstore')
 import nonebot_plugin_localstore as store
 from .config import Config
-from . import api
-from . import draw
-from . import save
+from . import api, draw, storage, retry
 
 __version__ = "0.9.0"
 __plugin_meta__ = PluginMetadata(
@@ -41,15 +40,22 @@ async def handle_BSScore(bot: Bot, event: Event):
     elif scores_total == 1919810:
         await BS_Score.finish('json数据损坏或无法打开,再重试一下罢')
         
-    bs_image = await draw.draw_image(scores_total,player_total,cache_dir = store.get_plugin_cache_dir() ,cache_file = store.get_plugin_cache_file('BS_cache.png'))
+    with open(store.get_plugin_data_file(f'{QQ_id}.json'), 'r') as json_file:
+        old_data = json.loads(json_file.read())
+    bs_image = await draw.draw_image(scores_total,player_total,old_data,cache_dir = store.get_plugin_cache_dir(),cache_file = store.get_plugin_cache_file('BS_cache.png'))
     if bs_image is None:
         await BS_Score.finish('绘图失败力')
     else:
         pass
-        
-    image_base64 = f"base64://{bs_image}"
-    
-    await BS_Score.finish(MessageSegment.image(image_base64))
+    # 保存新数据
+#    storage.save_user_data(QQ_id,data_dir = store.get_plugin_data_dir(),scores_data = scores_total)
+
+    image_base64 = f'base64://{bs_image}'
+    try:
+        await BS_Score.finish(MessageSegment.image(image_base64))
+    finally:
+        # 删除缓存
+        os.remove(store.get_plugin_cache_file('BS_cache.png'))
 
 
 BS_Bind = on_command('BS bind', aliases={'节奏光剑绑定', 'BS绑定'}, priority=10)
@@ -57,17 +63,27 @@ BS_Bind = on_command('BS bind', aliases={'节奏光剑绑定', 'BS绑定'}, prio
 async def handle_BS_Bind(bot: Bot, event: Event):
     QQ_id = event.get_user_id()
     message = str(event.get_message())
-    save_status = save.save_BSid(QQ_id, message, data_dir = store.get_plugin_data_dir())
+    data_dir = store.get_plugin_data_dir()
+    save_status = storage.save_BSid(QQ_id, message,data_dir)
     if save_status == 19:
         return
     if save_status == 810:
         await BS_Bind.finish('写入数据出错辣!')
+
+    player_id = await handle_BSid(QQ_id)
+    scores_data = await api.player_scores(player_id)
+    data_check = storage.save_user_data(QQ_id,data_dir,scores_data)
+    if data_check == None:
+        await BS_Bind.finish('BSID绑定成功,但beatleader查询不到BSID用户数据QAQ')
+    else:
+        pass
+
     await BS_Bind.finish(save_status)
 
 async def handle_BSid(QQ_id):
     with open(store.get_plugin_data_file('BSgroup.json'), 'r') as json_file:
-        data = json_file.read()
-    id_search = json.loads(data)
+        QQ_data = json_file.read()
+    id_search = json.loads(QQ_data)
     id = str(id_search[QQ_id])
     if id is None:
         return 114514
@@ -78,6 +94,72 @@ async def handle_BSid(QQ_id):
         id = id.replace("'", "").replace("'", "")
         return id
     
+BS_Search = on_command('BS search', aliases={'节奏光剑查歌', 'BS查歌'}, priority=10)
+@BS_Search.handle()
+async def send_BS_Search(bot: Bot,event: GroupMessageEvent):
+    message = str(event.get_message())
+    song_id = message.replace('BS查歌', '').replace('BS search', '').replace('节奏光剑查歌', '').strip()
+    song_information = await api.search_beatsaver(song_id)
+    if song_information == None:
+        await BS_Search.finish('无法获取歌曲信息,可能是id错误?')
+    else:
+        pass
+    song_preview = song_information['versions'][0]['previewURL']
+    song_cover = MessageSegment.image(song_information['versions'][0]['coverURL'])
+    song_rank = []
+    song_rank.append(song_information['ranked'])
+    song_rank.append(song_information['blRanked'])
+    # 判断这首歌是否是排位曲
+    if song_rank[0] == True:
+        ranking_ScoreSaber = 'ScoreSaber'
+    else:
+        ranking_ScoreSaber = 'None'
+    # 如果这首歌是BeatLeader的排位曲,则获取其中的star
+    if song_rank[1] == True:
+        ranking_BeatLeader = 'BeatLeader'
+        bl_song_star = []
+        bl_song_diffs = []
+        for version in song_information['versions']:
+            for diffs in version['diffs']:
+                bl_stars = diffs.get('blStars')
+                if bl_stars != None:
+                    bl_song_star.append(bl_stars)
+                else:
+                    pass
+                bl_song_diffs.append(diffs['difficulty'])
+    else:
+        ranking_BeatLeader = 'None'
+    rank_info = ''
+    # 如果都不是排位曲,直接输出False
+    rank_info = (f'{ranking_ScoreSaber} {ranking_BeatLeader}').replace('None', '')
+    if rank_info == '':
+        rank_info = 'False'
+    # 如果只是BeatLeader排位曲,则删除前面多余的空格
+    if ranking_BeatLeader == 'None':
+        rank_info.strip()
+    else:
+        pass
+    rank_star = ''
+    #判断是否是BeatLeader的Rank曲
+    if ranking_BeatLeader != 'None':
+        i = -1
+        for star in bl_song_star:
+            i += 1
+            rank_star += f'{bl_song_diffs[i]}:★{star}\n'
+    else:
+        rank_star = 'False'
+    
+    
+    song_anydata =  MessageSegment.text(f"歌曲:{song_information['metadata']['songName']}\n曲师:{song_information['metadata']['songAuthorName']}\n谱面制作:{song_information['metadata']['levelAuthorName']}\nbpm:{song_information['metadata']['bpm']}\n排位曲:{rank_info}\n歌曲难度(BeatLeader)\n{rank_star}")
+    await bot.send_group_msg(group_id = event.group_id, message = Message(song_cover + song_anydata))
+    song_download = await retry.download_song_preview(url = song_preview,cache_path = store.get_plugin_cache_dir())
+    if song_download == None:
+        await BS_Search.finish('歌曲下载出错辣!')
+    else:
+        pass
+    await BS_Search.finish(MessageSegment.record(song_download))
+
+
 
 BS_Help = on_command('BS help', aliases={'节奏光剑帮助', 'BS帮助'}, priority=5)
 @BS_Help.handle()

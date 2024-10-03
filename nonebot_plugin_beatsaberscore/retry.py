@@ -8,7 +8,7 @@ async def time_out_retry(url, retries = BS_RETRIES, timeout = BS_TIMEOUT, params
     while attempt < retries:
         try:
             async with httpx.AsyncClient() as client:
-                response = await client.get(url, timeout=timeout, params = params)
+                response = await client.get(url, timeout = timeout, params = params)
                 response.raise_for_status()
                 return response
         except (httpx.RequestError, httpx.HTTPStatusError):
@@ -18,6 +18,25 @@ async def time_out_retry(url, retries = BS_RETRIES, timeout = BS_TIMEOUT, params
                 if attempt == retries:
                     logger.error(f'重试网络达到{retries}次,请尝试在env.prod文件中调大重试次数或者检查本地网络配置')
                     return None
+                else:
+                    wait_time = int(2)
+                    await asyncio.sleep(wait_time)
+
+async def download_song_preview(url, cache_path, retries = BS_RETRIES, timeout = BS_TIMEOUT, params = None):
+    url = str(url)
+    attempt = 0
+    while attempt < retries:
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.get(url, timeout = timeout, params = params)
+                response.raise_for_status()
+                return response.content
+        except (httpx.RequestError, httpx.HTTPStatusError):
+            attempt += 1
+            if attempt == retries // 2:
+                logger.warning(f'重试网络达到{retries}次,请注意网络状态')
+                if attempt == retries:
+                    logger.error(f'重试网络达到{retries}次,请尝试在env.prod文件中调大重试次数或者检查本地网络配置')
                 else:
                     wait_time = int(2)
                     await asyncio.sleep(wait_time)

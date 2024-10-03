@@ -1,5 +1,6 @@
 from PIL import ImageFont
 from pathlib import Path
+from nonebot.log import logger
 
 def font_loader(font_size, font_name = None):
     font_path = f'{Path(__file__).parent}/static/Teko-Bold.ttf'
@@ -10,6 +11,6 @@ def font_loader(font_size, font_name = None):
     try:
         loaded_font = ImageFont.truetype(font_path, font_size)
     except IOError:
-        print(f'无法加载字体文件 {font_path}. 使用默认字体。')
+        logger.error(f'无法加载字体文件 {font_path},请检查插件是否完整,或者重装插件,如果还有报错,请到github给我提出issues')
         loaded_font = ImageFont.load_default()
     return loaded_font

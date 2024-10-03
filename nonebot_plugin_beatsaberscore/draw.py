@@ -2,13 +2,11 @@ from PIL import Image, ImageDraw, ImageFilter
 import httpx
 import base64
 from io import BytesIO
-from . import retry
-from . import loading_font
-from . import corner
+from . import retry, loading_font, corner, calculation
 from nonebot.log import logger
 from pathlib import Path
 
-async def draw_image(scores_total,player_total,cache_dir,cache_file):
+async def draw_image(scores_total,player_total,old_data,cache_dir,cache_file):
     avatar = await player_image(player_total)
     if avatar is None:
         return 114514
@@ -50,7 +48,7 @@ async def draw_image(scores_total,player_total,cache_dir,cache_file):
     background_image.paste(beatleader_image, beatleader_position, beatleader_image)
 
     x_song_image = start_x_offset = background_offset_x = start_background_offset_x = x_name_position = x_acc_position = x_acc_icon = x_pp = x_pp_weight = x_acc_improve = x_song_id = x_difficulty = 100
-    y_song_image = background_offset_y = y_name_position = y_acc_position = y_acc_icon = y_pp = y_pp_weight = y_acc_improve = y_song_id = y_difficulty = 500
+    y_song_image = start_y_position = background_offset_y = y_name_position = y_acc_position = y_acc_icon = y_pp = y_pp_weight = y_acc_improve = y_song_id = y_difficulty = 500
     image_size = (320, 320)  # 图像大小
     if scores_total == 114514:
         return
@@ -64,11 +62,12 @@ async def draw_image(scores_total,player_total,cache_dir,cache_file):
         if song_image:
             song_background = song_image.copy()
             expand_size = (1000, 1000)
+            # 放大歌曲图片
             song_background = song_background.resize(expand_size)
             # crop(left, upper, right, lower)
             crop_size = (100, 200, 900, 600)
+            # 截取部分歌曲图片做背景
             song_background_size = (crop_size[2] - crop_size[0], crop_size[3] - crop_size[1])
-            song_background_length = int(crop_size[2] - crop_size[0])
             song_background = song_background.crop(crop_size)
             handle_SB = song_background.convert('RGBA')
             handle_SB = corner.handle_corn(image = song_background, size = song_background_size, corner_radius = 25)
@@ -81,7 +80,9 @@ async def draw_image(scores_total,player_total,cache_dir,cache_file):
             background_acrylic = background_acrylic.resize(song_background_size)
             song_background = Image.alpha_composite(song_background, background_acrylic)
             background_image.paste(song_background, (background_offset_x, background_offset_y), song_background)
-            background_offset_x += int(song_background_length + 200)  # 位置间隔调整
+            # 用于计算位置
+            song_background_length = int(song_background_size[0])
+            background_offset_x += song_background_length + 200  # 位置间隔调整
             if background_offset_x >= 4000:
                 background_offset_y += 650
                 background_offset_x = start_background_offset_x
@@ -118,7 +119,7 @@ async def draw_image(scores_total,player_total,cache_dir,cache_file):
 
         bs_draw.text(((x_name_position + image_size[0] + 18), y_name_position - 25), name, font=font_song, fill=(144, 238, 255))
 
-        x_name_position += crop_size[2] + 100  # 位置间隔调整
+        x_name_position += crop_size[2] + 100
         if x_name_position > 3600:
             y_name_position += 650
             x_name_position = start_x_offset
@@ -138,7 +139,7 @@ async def draw_image(scores_total,player_total,cache_dir,cache_file):
         font_pp = loading_font.font_loader(font_size = pp_size)
 
         bs_draw.text((x_pp + image_size[0] + pp_icon_size[0] + 10, y_pp + 50), str(f'{song_pp:.2f}'), font=font_pp, fill=(255, 105, 180))
-        x_pp += crop_size[2] + 100  # 位置间隔调整
+        x_pp += crop_size[2] + 100
         if x_pp > 3600:
             y_pp += 650
             x_pp = x_pp_weight = start_x_offset
@@ -163,11 +164,12 @@ async def draw_image(scores_total,player_total,cache_dir,cache_file):
             y_pp += 650
             x_pp_weight = start_x_offset
             
-
+    open_acc_icon = Image.open(f'{Path(__file__).parent}/static/accuracy.png').convert('RGBA')
+    open_acc_rank_ss = Image.open(f'{Path(__file__).parent}/static/rank/ss.png').convert('RGBA')
+    open_acc_rank_s = Image.open(f'{Path(__file__).parent}/static/rank/s.png').convert('RGBA')
     # 准度绘制
     for accuracy in scores_total['song_accuracy']:
         # acc图标
-        open_acc_icon = Image.open(f'{Path(__file__).parent}/static/accuracy.png').convert('RGBA')
         copy_acc_icon = open_acc_icon.copy()
         acc_icon_size = (60, 60)
         copy_acc_icon = copy_acc_icon.resize(acc_icon_size)
@@ -177,6 +179,18 @@ async def draw_image(scores_total,player_total,cache_dir,cache_file):
         accuracy_size  = 80
         accuracy_font = loading_font.font_loader(font_size = accuracy_size)
         bs_draw.text((x_acc_position + image_size[0] + acc_icon_size[0] + 10, (int(y_acc_position) + (int(name_size) + int(pp_size) + int(weight_size)) // 2) + 50), (str(accuracy) + '%'), font=accuracy_font, fill=(255, 255, 255))
+        # 准度评级
+#        acc_rank_icon_size = (360, 360)
+#        if int(95) > accuracy >= int(90):
+#            copy_acc_rank_ss = open_acc_rank_ss.copy()
+#            copy_acc_rank_ss = copy_acc_rank_ss.resize(acc_rank_icon_size)
+#            copy_acc_rank_icon = copy_acc_rank_ss
+#        if int(90) > accuracy >= int(80):
+#            copy_acc_rank_s = open_acc_rank_s.copy()
+#            copy_acc_rank_s = copy_acc_rank_s.resize(acc_rank_icon_size)
+#            copy_acc_rank_icon = copy_acc_rank_s
+
+#        background_image.paste(copy_acc_rank_icon, (x_acc_position + image_size[0] + acc_icon_size[0] + 150, (int(y_acc_position) + (int(name_size) + int(pp_size) + int(weight_size)) // 2) + 50), copy_acc_rank_icon)
         x_acc_position += crop_size[2] + 100
         x_acc_icon = x_acc_position
         if x_acc_position > 3600:
@@ -200,9 +214,9 @@ async def draw_image(scores_total,player_total,cache_dir,cache_file):
             pass
     # 歌曲id
     y_song_id += crop_size[3] - crop_size[1]
+    open_id_icon = Image.open(f'{Path(__file__).parent}/static/id.png').convert('RGBA')
     for song_id in scores_total['song_id']:
         # id图标
-        open_id_icon = Image.open(f'{Path(__file__).parent}/static/id.png').convert('RGBA')
         copy_id_icon = open_id_icon.copy()
         id_icon_size = (80, 80)
         copy_id_icon = copy_id_icon.resize(id_icon_size)
@@ -244,12 +258,29 @@ async def draw_image(scores_total,player_total,cache_dir,cache_file):
                 y_difficulty += 650
         else:
             pass
-        
+
+
+    # 歌曲变更高亮显示
+#    new_id_data = scores_total['song_id']
+#    new_pp_data = scores_total['song_pp']
+#    old_id_data = old_data['id_data']
+#    old_pp_data = old_data['id_data']
+#    result_data = calculation.contrast(new_id_data,new_pp_data,old_id_data,old_pp_data)
+#    open_highlight_icon = Image.open(f'{Path(__file__).parent}/static/highlight.png').convert('RGBA')
+#    for record in result_data:
+#        copy_highlight_icon = open_highlight_icon.copy()
+        # 引用一下背景图大小
+#        highlight_size = song_background_size
+#        copy_highlight_icon = copy_highlight_icon.resize(highlight_size)
+    
+#        highlight_position = calculation.calculate_position(record,start_x_offset,start_y_position,change = crop_size[2])
+#        background_image.paste(copy_highlight_icon, highlight_position, copy_highlight_icon)
+
         # 做点标记
-        project_size = 80
-        font_difficulty = loading_font.font_loader(font_size = project_size)
-        information = str('nonebot-plugin-beatsaberscore By qwq12738qwq')
-        bs_draw.text(((background_image_size[0] // 2) - len(information) - 800, background_image_size[1] - project_size), information, font=font_difficulty, fill=(44, 106, 163))
+    project_size = 80
+    font_difficulty = loading_font.font_loader(font_size = project_size)
+    information = str('nonebot-plugin-beatsaberscore By qwq12738qwq')
+    bs_draw.text(((background_image_size[0] // 2) - len(information) - 800, background_image_size[1] - project_size), information, font=font_difficulty, fill=(44, 106, 163))
 
     background_image.save(f'{cache_dir}/BS_cache.png')
     with open(cache_file, "rb") as image_file:

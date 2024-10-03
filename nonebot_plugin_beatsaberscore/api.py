@@ -1,17 +1,19 @@
+import json
 import httpx
+from . import retry
 from nonebot.log import logger
 
 async def player_scores(player_id):
     api_url = f'https://api.beatleader.xyz/player/{player_id}/scores'
 
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient():
         scores_data = {
         'sortBy': 'pp',
         'count': '12',
         'page':'1'
     }
-        scores_response = await client.get(api_url, params=scores_data)
-        if scores_response.status_code == 200:
+        scores_response = await retry.time_out_retry(api_url, params = scores_data)
+        if scores_response != None:
             score_data = scores_response.json()
             if 'data' in score_data:
                     score_data = score_data['data']
@@ -77,13 +79,13 @@ async def player_scores(player_id):
 
 async def handle_player(player_id):
     api_url = f'https://api.beatleader.xyz/player/{player_id}'
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient():
         player_data = {
             'stats': 'true',
             'keepOriginalId':'false'
         }
-        player_response = await client.get(api_url, params=player_data)
-        if player_response.status_code == 200:
+        player_response = await retry.time_out_retry(api_url, params = player_data)
+        if player_response != None:
                 player_data = player_response.json()
                 if 'scoreStats' in player_data:
                     player_top = player_data['scoreStats']['topPp']
@@ -108,3 +110,14 @@ async def handle_player(player_id):
         else:
             logger.error(f'获取歌曲数据失败,请康康网络或这个id没有注册beatleader?Σ(っ °Д °;)っ')
             return 114514
+
+async def search_beatsaver(song_id):
+     api_url = f'https://api.beatsaver.com/maps/id/{song_id}'
+     async with httpx.AsyncClient():
+        song_data_response = await retry.time_out_retry(api_url, params = None)
+        if song_data_response != None:
+            song_data = song_data_response.json()
+            return song_data
+        else:
+             logger.warning('获取歌曲数据发生错误')
+             return None
