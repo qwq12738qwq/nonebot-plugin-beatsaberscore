@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "nonebot-plugin-beatsaberscore"
-version = "0.9.3"
-description = "Nonebot2的节奏光剑查分插件,支持beatleader查分"
+version = "0.9.6-post1"
+description = "Nonebot2的节奏光剑查分插件,支持BeatLeader&ScoreSaber查分"
 authors = ["12738 <12738smp@Gmail.com>"]
 license = "GPL-3.0 license"
 readme = "README.md"
@@ -9,7 +9,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 nonebot2 = ">=2.2.0"
 httpx = ">=0.23.1"
-pillow = ">=10.0.0,<11.0.0"
+pillow = ">=10.0.0"
 pydantic = ">=1.10.13"
 nonebot-adapter-onebot = "^2.0"
 nonebot-plugin-localstore = ">=0.7.0"
