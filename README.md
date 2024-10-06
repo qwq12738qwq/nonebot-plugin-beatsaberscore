@@ -50,7 +50,7 @@ Nonebot2的节奏光剑BeatLeader查分(ﾉ≧∀≦)ﾉ
 </details>
 
 ## 🔄 更新
-***请不要用install更新!!!!!!!!!!!!***
+***请不要用上面的安装方式更新!!!!!!!!!!!!***
 <details open>
 <summary>使用 nb-cli 更新</summary>
 在 nonebot2 项目的根目录下打开命令行, 输入以下指令更新
