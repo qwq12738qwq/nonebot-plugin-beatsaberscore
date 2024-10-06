@@ -93,6 +93,8 @@ PS:最好是有科学上网,如果没有,BS_RETRIES向建议调至6以上
 
 发送` BL查分 `,也可发送` BL score `,等效于` BL查分 `
 
+***Song_ID查歌***
+
 发送` BS search ` + 歌曲的ID或者` BS查歌 ` + 歌曲的id可以查询歌曲的信息
 
 **SteamID是什么?**
