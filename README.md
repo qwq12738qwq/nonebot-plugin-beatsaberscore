@@ -61,7 +61,7 @@ Nonebot2的节奏光剑BeatLeader查分(ﾉ≧∀≦)ﾉ
 
 <details>
 <summary>使用 pip 更新</summary>
-在 nonebot2 项目的根目录下打开命令行, 输入以下指令即可安装
+在 nonebot2 项目的根目录下打开命令行, 输入以下指令即可更新
   
     pip install nonebot-plugin-beatsaberscore --upgrade
 
