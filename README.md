@@ -67,11 +67,6 @@ Nonebot2的节奏光剑BeatLeader查分(ﾉ≧∀≦)ﾉ
 
 </details>
 
->如果你的Nonebot2项目下已经启用虚拟环境,可以使用Pipenv安装到项目中,但你需要安装pipenv包
-
-<details>
-
-
 ## ⚙️ 配置
 
 | 配置项 | 必填 | 默认值 | 说明 |
