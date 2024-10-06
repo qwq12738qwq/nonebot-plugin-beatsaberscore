@@ -6,7 +6,7 @@ from . import retry, loading_font, corner, calculation
 from nonebot.log import logger
 from pathlib import Path
 
-async def draw_image(scores_total,player_total,old_data,cache_dir,cache_file):
+async def draw_image(scores_total,player_total,old_data,cache_dir,cache_file,SS = False):
     avatar = await player_image(player_total)
     if avatar is None:
         return 114514
@@ -41,11 +41,15 @@ async def draw_image(scores_total,player_total,old_data,cache_dir,cache_file):
 
         bs_draw.text(player['position'], player['text'], font=font, fill=player['color'])
 
-    # beatleader图标
-    beatleader_image = Image.open(f'{Path(__file__).parent}/static/beatleader.png').convert('RGBA')
-    beatleader_image = beatleader_image.resize(avatar_size)
+    # 判断排行榜图标
+    if SS == True:
+        rankings_image = Image.open(f'{Path(__file__).parent}/static/ScoreSaber/scoresaber.png').convert('RGBA')
+    else:
+        rankings_image = Image.open(f'{Path(__file__).parent}/static/BeatLeader/beatleader.png').convert('RGBA')
+        
+    rankings_image = rankings_image.resize(avatar_size)
     beatleader_position = (2350, 90)
-    background_image.paste(beatleader_image, beatleader_position, beatleader_image)
+    background_image.paste(rankings_image, beatleader_position, rankings_image)
 
     x_song_image = start_x_offset = background_offset_x = start_background_offset_x = x_name_position = x_acc_position = x_acc_icon = x_pp = x_pp_weight = x_acc_improve = x_song_id = x_difficulty = 100
     y_song_image = start_y_position = background_offset_y = y_name_position = y_acc_position = y_acc_icon = y_pp = y_pp_weight = y_acc_improve = y_song_id = y_difficulty = 500
@@ -179,39 +183,44 @@ async def draw_image(scores_total,player_total,old_data,cache_dir,cache_file):
         accuracy_size  = 80
         accuracy_font = loading_font.font_loader(font_size = accuracy_size)
         bs_draw.text((x_acc_position + image_size[0] + acc_icon_size[0] + 10, (int(y_acc_position) + (int(name_size) + int(pp_size) + int(weight_size)) // 2) + 50), (str(accuracy) + '%'), font=accuracy_font, fill=(255, 255, 255))
+        '''
         # 准度评级
-#        acc_rank_icon_size = (360, 360)
-#        if int(95) > accuracy >= int(90):
-#            copy_acc_rank_ss = open_acc_rank_ss.copy()
-#            copy_acc_rank_ss = copy_acc_rank_ss.resize(acc_rank_icon_size)
-#            copy_acc_rank_icon = copy_acc_rank_ss
-#        if int(90) > accuracy >= int(80):
-#            copy_acc_rank_s = open_acc_rank_s.copy()
-#            copy_acc_rank_s = copy_acc_rank_s.resize(acc_rank_icon_size)
-#            copy_acc_rank_icon = copy_acc_rank_s
+        acc_rank_icon_size = (360, 360)
+        if int(95) > accuracy >= int(90):
+            copy_acc_rank_ss = open_acc_rank_ss.copy()
+            copy_acc_rank_ss = copy_acc_rank_ss.resize(acc_rank_icon_size)
+            copy_acc_rank_icon = copy_acc_rank_ss
+        if int(90) > accuracy >= int(80):
+            copy_acc_rank_s = open_acc_rank_s.copy()
+            copy_acc_rank_s = copy_acc_rank_s.resize(acc_rank_icon_size)
+            copy_acc_rank_icon = copy_acc_rank_s
 
-#        background_image.paste(copy_acc_rank_icon, (x_acc_position + image_size[0] + acc_icon_size[0] + 150, (int(y_acc_position) + (int(name_size) + int(pp_size) + int(weight_size)) // 2) + 50), copy_acc_rank_icon)
+        background_image.paste(copy_acc_rank_icon, (x_acc_position + image_size[0] + acc_icon_size[0] + 150, (int(y_acc_position) + (int(name_size) + int(pp_size) + int(weight_size)) // 2) + 40), copy_acc_rank_icon)
+        '''
         x_acc_position += crop_size[2] + 100
         x_acc_icon = x_acc_position
         if x_acc_position > 3600:
             x_acc_position = x_acc_icon = start_x_offset
             y_acc_position += 650
             y_acc_icon = y_acc_position
+
         else:
             pass
     
-    # acc提升绘制图片
-    for improve_acc in scores_total['improve_acc']:
-        improve_acc = round(float(improve_acc * int(100)), 2)
-        improve_size = 60
-        improve_acc__font = loading_font.font_loader(font_size = improve_size)
-        bs_draw.text((x_acc_improve + image_size[0] + 20, (int(y_acc_improve) + (int(name_size) + int(pp_size) + int(weight_size) + int(accuracy_size)) // 2) + 80), str( '(+' + str(improve_acc) + '%)'), font=improve_acc__font, fill=(144, 238, 144))
-        x_acc_improve += crop_size[2] + 100
-        if x_acc_improve > 3600:
-            x_acc_improve = start_x_offset
-            y_acc_improve +=  650
-        else:
-            pass
+    # acc提升绘制
+    if SS != True:
+        for improve_acc in scores_total['improve_acc']:
+            improve_acc = round(float(improve_acc * int(100)), 2)
+            improve_size = 60
+            improve_acc__font = loading_font.font_loader(font_size = improve_size)
+            bs_draw.text((x_acc_improve + image_size[0] + 20, (int(y_acc_improve) + (int(name_size) + int(pp_size) + int(weight_size) + int(accuracy_size)) // 2) + 80), str( '(+' + str(improve_acc) + '%)'), font=improve_acc__font, fill=(144, 238, 144))
+            x_acc_improve += crop_size[2] + 100
+            if x_acc_improve > 3600:
+                x_acc_improve = start_x_offset
+                y_acc_improve +=  650
+            else:
+                # ScoreSaber获取不到这个数据,之后可能会结合本地文件去计算
+                pass
     # 歌曲id
     y_song_id += crop_size[3] - crop_size[1]
     open_id_icon = Image.open(f'{Path(__file__).parent}/static/id.png').convert('RGBA')
@@ -233,14 +242,18 @@ async def draw_image(scores_total,player_total,old_data,cache_dir,cache_file):
             y_song_id += 650
         else:
             pass
-
+    
+    search_song_id = scores_total['song_id']
     song_stars = scores_total['song_stars']
     song_difficulty = scores_total.get('song_difficulty', [])
     i = -1
     for difficulty in song_difficulty:
         difficulty_icon_size = (180, 150)
         # 星评难度图标
-        open_difficulty_icon = Image.open(f'{Path(__file__).parent}/static/{difficulty}.png').convert('RGBA')
+        if SS == True:
+            open_difficulty_icon = Image.open(f'{Path(__file__).parent}/static/ScoreSaber/{difficulty}.png').convert('RGBA')
+        else:
+            open_difficulty_icon = Image.open(f'{Path(__file__).parent}/static/BeatLeader/{difficulty}.png').convert('RGBA')
         copy_difficulty_icon = open_difficulty_icon.copy()
         copy_difficulty_icon = copy_difficulty_icon.resize(difficulty_icon_size)
         background_image.paste(copy_difficulty_icon, (x_difficulty + image_size[0] - difficulty_icon_size[0],  y_difficulty + image_size[1] - difficulty_icon_size[1]), copy_difficulty_icon)
@@ -259,23 +272,23 @@ async def draw_image(scores_total,player_total,old_data,cache_dir,cache_file):
         else:
             pass
 
-
+    '''
     # 歌曲变更高亮显示
-#    new_id_data = scores_total['song_id']
-#    new_pp_data = scores_total['song_pp']
-#    old_id_data = old_data['id_data']
-#    old_pp_data = old_data['id_data']
-#    result_data = calculation.contrast(new_id_data,new_pp_data,old_id_data,old_pp_data)
-#    open_highlight_icon = Image.open(f'{Path(__file__).parent}/static/highlight.png').convert('RGBA')
-#    for record in result_data:
-#        copy_highlight_icon = open_highlight_icon.copy()
+    new_id_data = scores_total['song_id']
+    new_pp_data = scores_total['song_pp']
+    old_id_data = old_data['id_data']
+    old_pp_data = old_data['id_data']
+    result_data = calculation.contrast(new_id_data,new_pp_data,old_id_data,old_pp_data)
+    open_highlight_icon = Image.open(f'{Path(__file__).parent}/static/highlight.png').convert('RGBA')
+    for record in result_data:
+        copy_highlight_icon = open_highlight_icon.copy()
         # 引用一下背景图大小
-#        highlight_size = song_background_size
-#        copy_highlight_icon = copy_highlight_icon.resize(highlight_size)
+        highlight_size = song_background_size
+        copy_highlight_icon = copy_highlight_icon.resize(highlight_size)
     
-#        highlight_position = calculation.calculate_position(record,start_x_offset,start_y_position,change = crop_size[2])
-#        background_image.paste(copy_highlight_icon, highlight_position, copy_highlight_icon)
-
+        highlight_position = calculation.calculate_position(record,start_x_offset,start_y_position,change = crop_size[2])
+        background_image.paste(copy_highlight_icon, highlight_position, copy_highlight_icon)
+    '''
         # 做点标记
     project_size = 80
     font_difficulty = loading_font.font_loader(font_size = project_size)
@@ -298,7 +311,7 @@ async def player_image(player_total):
             try:
                 # 尝试打开图像数据
                 return Image.open(avatar_data)
-            except IOError as e:
+            except IOError:
                 return None
         except httpx.RequestError:
             return None
@@ -315,7 +328,7 @@ async def download_image(image_url):
             song_data = BytesIO(get_song_image.content)
             try:
                 return Image.open(song_data)
-            except IOError as e:
+            except IOError:
                 return None
         except httpx.RequestError:
             return None

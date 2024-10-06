@@ -36,31 +36,53 @@ def save_BSid(QQ_id, message,data_dir):
     if QQ_id not in QQ_data or QQ_data[QQ_id] != BS_id:
         return 810
     else:
-        msg = f'QQ号: {QQ_id} 已绑定 BeatLeaderID: {BS_id} ヾ(*´▽‘*)ﾉ'
+        msg = f'QQ号: {QQ_id} 已绑定SteamID: {BS_id} ヾ(*´▽‘*)ﾉ'
         return msg
     
-def save_user_data(QQ_id,data_dir,scores_data = None):
+def save_user_data(QQ_id,data_dir,BL_scores_data = None, SS_scores_data = None):
+
+    if BL_scores_data == None and SS_scores_data == None:
+        return None
+    else:
+        pass
 
     user_data_path = Path(f'{data_dir}/{QQ_id}.json')
     if user_data_path.exists():
-        with open(user_data_path, 'r', encoding='utf-8') as f:
-            song_data = json.load(f)
+        # 尝试打开文件
+        try:
+            with open(user_data_path, 'r', encoding='utf-8') as f:
+                all_song_data = json.load(f)
+        except:
+            all_song_data = {}
     else:
+        pass
+
+    if BL_scores_data == None:
         song_data = {}
-    
-    if scores_data == None:
-        return ##############
-    song_data['id_data'] = scores_data['song_id']
-    song_data['pp_data'] = scores_data['song_pp']
-
-    with open(user_data_path, 'w', encoding='utf-8') as f:
-        json.dump(song_data, f, sort_keys=True, indent=4, ensure_ascii=False)
-
-    try:
-        with open(user_data_path, 'r', encoding='utf-8') as f:
-            test_data = json.load(f)
-    except FileNotFoundError:
-        return None
-    
-    return 
+        with open(user_data_path, 'w', encoding='utf-8') as f:
+            json.dump(song_data, f, sort_keys=True, indent=4, ensure_ascii=False)
+        return 'BL_None'
+    else:
+        try:
+            # 向json文件更新或存储数据
+            all_song_data['id_data'] = BL_scores_data['song_id']
+            all_song_data['pp_data'] = BL_scores_data['song_pp']
+            with open(user_data_path, 'w', encoding='utf-8') as f:
+                json.dump(all_song_data, f, sort_keys=True, indent=4, ensure_ascii=False)
+        except:
+            return 'BL_None'
+    if SS_scores_data == None:
+        SS_song_data = {}
+        with open(user_data_path, 'w', encoding='utf-8') as f:
+            json.dump(SS_song_data, f, sort_keys=True, indent=4, ensure_ascii=False)
+        return 'SS_None'
+    else:
+        try:
+            all_song_data['SS_id_data'] = SS_scores_data['song_id']
+            all_song_data['SS_pp_data'] = SS_scores_data['song_pp']
+            with open(user_data_path, 'w', encoding='utf-8') as f:
+                json.dump(all_song_data, f, sort_keys=True, indent=4, ensure_ascii=False)
+        except:
+            return 'SS_None'
+    return 'Done'
 
