@@ -9,7 +9,7 @@ import nonebot_plugin_localstore as store
 from .config import Config
 from . import api, draw, storage, retry
 
-__version__ = "0.9.6"
+__version__ = "0.9.7"
 __plugin_meta__ = PluginMetadata(
     name="Beat Saber查分器",
     description="Nonebot2的节奏光剑查分插件,支持BeatLeader&ScoreSaber查分",
