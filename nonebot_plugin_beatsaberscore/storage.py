@@ -73,7 +73,6 @@ def save_user_data(QQ_id,data_dir,BL_scores_data = None, SS_scores_data = None):
             all_song_data['pp_data'] = BL_scores_data['song_pp']
             with open(user_data_path, 'w', encoding='utf-8') as f:
                 json.dump(all_song_data, f, sort_keys=True, indent=4, ensure_ascii=False)
-            return 'Done'
         except:
             BL = False
     
@@ -89,7 +88,6 @@ def save_user_data(QQ_id,data_dir,BL_scores_data = None, SS_scores_data = None):
             all_song_data['SS_pp_data'] = SS_scores_data['song_pp']
             with open(user_data_path, 'w', encoding='utf-8') as f:
                 json.dump(all_song_data, f, sort_keys=True, indent=4, ensure_ascii=False)
-            return 'Done'
         except:
             SS = False
     # 改了一下判断逻辑
@@ -98,5 +96,6 @@ def save_user_data(QQ_id,data_dir,BL_scores_data = None, SS_scores_data = None):
     elif SS == False:
         return 'SS_None'
     else:
-        return None
+        return 'Done'
+    
 
