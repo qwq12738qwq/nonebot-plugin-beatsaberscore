@@ -49,6 +49,28 @@ Nonebot2的节奏光剑BeatLeader查分(ﾉ≧∀≦)ﾉ
 
 </details>
 
+## 🔄 更新
+***请不要用install更新!!!!!!!!!!!!***
+<details open>
+<summary>使用 nb-cli 更新</summary>
+在 nonebot2 项目的根目录下打开命令行, 输入以下指令更新
+  
+    nb plugin install nonebot-plugin-beatsaberscore --upgrade
+
+</details>
+
+<details>
+<summary>使用 pip 更新</summary>
+在 nonebot2 项目的根目录下打开命令行, 输入以下指令即可安装
+  
+    pip install nonebot-plugin-beatsaberscore --upgrade
+
+</details>
+
+>如果你的Nonebot2项目下已经启用虚拟环境,可以使用Pipenv安装到项目中,但你需要安装pipenv包
+>
+<details>
+
 ## ⚙️ 配置
 
 | 配置项 | 必填 | 默认值 | 说明 |
@@ -65,38 +87,50 @@ PS:最好是有科学上网,如果没有,BS_RETRIES向建议调至6以上
 
 可以发送` BS help `或` BS帮助 `获取帮助(其实也就导航到这里力)
 
-` BS bind `绑定beatleaderID后,输入` BS score `就可以查分了
+` BS绑定 ` + SteamID 绑定SteamID,绑定ID才可以查分,也可发送` BS bind `,等效` BS绑定 `
 
-也可以输入` BS绑定 `绑定beatleaderID,` BS查分 `用于触发查分的指令
+***ScoreSaber查分***
+
+发送` SS查分 `,也可发送` SS score `,等效于` SS查分 `
+
+***BeatLeader查分***
+
+发送` BL查分 `,也可发送` BL score `,等效于` BL查分 `
 
 发送` BS search ` + 歌曲的ID或者` BS查歌 ` + 歌曲的id可以查询歌曲的信息
 
-**beatleaderID是什么?**
+**SteamID是什么?**
 
  在登入` beatleader.xyz `后打开个人信息
  
  <img src='./explanation.png'>
  
- 这个就是你的` beatleaderID `辣,
- (说人话也就是` SteamID `)
-即使ID不是纯数字也是可以用的
+ 这个就是你的` SteamID `辣(即使ID不是纯数字也是可以用的)
+
+ 即使是scoresaber排行榜网站也是同理
+ 
+ 也可以到Steam个人主页去找SteamID,这里就不多赘述了
 
 ## ✨ 未来规划
+- [X] 添加对ScoreSaber的查分支持
 - [ ] ......()
 - [ ] 定时推送beatsaver的新曲,渲染新曲图片
 - [ ] 添加更细致的响应规则
 - [ ] 给自制谱投票功能
 - [ ] 歌曲的推荐
 - [ ] 优化运行速度,使用线上+本地缓存来提高响应速度
-- [ ] 添加对ScoreSaber的查分支持
+
 
 ## 📝 更新日志
+### 0.9.6
+- 新增 ScoreSaber的查分支持
+- 修复 绑定错误ID时返回的一些错误信息进行修正
 ### 0.9.3
-- 增加了歌曲id的搜歌功能(十分的简陋啊,但是我没摸鱼())
+- 增加了歌曲id的搜歌功能(十分的简陋啊)
 ### 0.9.0
 - 完成基础的beatleader查分
 
-## 🔄 已知问题
+## 🔍 已知问题
 有极少数的beatleader账号获取不到某些信息导致代码报错(之后也会改改)
 
 比其他查分器运行的要慢一些~
@@ -109,6 +143,10 @@ PS:最好是有科学上网,如果没有,BS_RETRIES向建议调至6以上
 写这个纯粹是因为喜欢Beat Saber(也是因为Beat Saber没查分器这东西嘛)
 
 本人代码写的比较烂,谨慎pr~~
+
+这个假期之后是真没时间了,等寒假或者高考完吧(不过一有时间我肯定也会更新的)
+
+正在考虑做个背景图?就这么点我自己都嫌不够看...
 
 如果你有更好的想法或者修改代码的建议,随时欢迎提出issues(●´∀｀●)
 
@@ -126,4 +164,5 @@ PS:最好是有科学上网,如果没有,BS_RETRIES向建议调至6以上
 
 At last,效果图(●′ω`●)
 <img src='./result.png'>
+<img src='./SS_result.png'>
 enjoy~
