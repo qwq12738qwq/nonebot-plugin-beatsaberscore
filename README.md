@@ -121,7 +121,7 @@ PS:最好是有科学上网,如果没有,BS_RETRIES向建议调至6以上
 
 ## 📝 更新日志
 ### 0.9.7
-- 修复 [#2](https://github.com/qwq12738qwq/nonebot-plugin-beatsaberscore/issues/2)
+- ~~修复 [#2](https://github.com/qwq12738qwq/nonebot-plugin-beatsaberscore/issues/2)~~(如修)
 - 更改了下存储数据的逻辑
 ### 0.9.6
 - 新增 ScoreSaber的查分支持
