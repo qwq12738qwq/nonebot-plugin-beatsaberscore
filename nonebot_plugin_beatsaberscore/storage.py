@@ -60,6 +60,7 @@ def save_user_data(QQ_id,data_dir,BL_scores_data = None, SS_scores_data = None):
         with open(user_data_path, 'w', encoding='utf-8') as f:
             json.dump(all_song_data, f, sort_keys=True, indent=4, ensure_ascii=False)
 
+    SS = BL = True
     if BL_scores_data == None:
         song_data = {}
         song_data['id_data'] = ''
