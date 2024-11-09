@@ -168,7 +168,7 @@ PS:如果遇到这种错误,这是我**有意而为之**,忽视即可,不影响�
 绑定信息存在本地,如果换Bot查分的话你需要再绑定一次
 
 在scoresaber查分下,有个别账号在#36-#40之间id丢失,目前我找不到原因
-<img src='./image/SS_example.png'>
+<img src='./image/SS_error.png'>
 
 ## 🗨️ 想说的话
 之后的某些更新可能需要借助BeatLeader完成对ScoreSaber查分图的优化  
