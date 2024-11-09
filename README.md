@@ -111,9 +111,9 @@ PS:如果遇到这种错误,这是我**有意而为之**,忽视即可,不影响�
 ***Song计算准度***
 ` 谱面计算 `+ 歌曲id + 难度 + 需要的准度(歌曲id/难度/需要的准度顺序可以打乱)  
 举个例子:  
-<img src='./image/calculation_example.png'>
+<img src='./image/calculation_example.png'>  
 **注意**  
-此功能尚未完善,Note数仅供看着玩,但我能确保需求分数是准确的
+此功能尚未完善,miss Note数仅供看着玩(),但我能确保需求分数是准确的
 
 **SteamID是什么?**
 
