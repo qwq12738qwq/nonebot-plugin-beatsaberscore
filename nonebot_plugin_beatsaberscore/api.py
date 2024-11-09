@@ -1,11 +1,11 @@
 import httpx
-from . import retry
+from . import retry, calculation
 from nonebot.log import logger
 
 async def BL_player_scores(player_id):
 
     async with httpx.AsyncClient():
-        scores_response = await retry.time_out_retry(url = f'https://api.beatleader.xyz/player/{player_id}/scores', params = {'sortBy': 'pp','count': '12','page':'1'}, retries = 4)
+        scores_response = await retry.time_out_retry(url = f'https://api.beatleader.xyz/player/{player_id}/scores', params = {'sortBy': 'pp','count': '40','page':'1'}, retries = 4)
         if scores_response != None:
             score_data = scores_response.json()
             score_data = score_data['data']
@@ -49,6 +49,14 @@ async def BL_player_scores(player_id):
                 all_song_id['leaderboard']['song']['id']
                 for all_song_id in score_data
             ]
+            song_accleft = [
+                all_song_accleft['accLeft']
+                for all_song_accleft in score_data
+            ]
+            song_accright = [
+                all_song_accright['accRight']
+                for all_song_accright in score_data
+            ]
             logger.info('获取BeatLeader歌曲全部数据完成')
             return {
                 'song_name': song_name,
@@ -60,7 +68,9 @@ async def BL_player_scores(player_id):
                 'song_weight': weight,
                 'song_accuracy': accuracy,
                 'improve_acc': improvement,
-                'song_id': song_id
+                'song_id': song_id,
+                'song_accleft': song_accleft,
+                'song_accright': song_accright
                 }
         else:
             logger.error(f'获取歌曲数据失败,请康康网络或这个id没有注册beatleader?Σ(っ °Д °;)っ')
@@ -99,7 +109,7 @@ async def BL_handle_player(player_id):
 
 async def SS_player_scores(player_id):
     async with httpx.AsyncClient():
-        scores_response = await retry.time_out_retry(url = f'https://scoresaber.com/api/player/{player_id}/scores', params = {'sort': 'top','limit': '12','page':'1'}, retries = 4)
+        scores_response = await retry.time_out_retry(url = f'https://scoresaber.com/api/player/{player_id}/scores', params = {'sort': 'top','limit': '40','page':'1'}, retries = 4)
         if scores_response != None:
             score_data = scores_response.json()
             score_data = score_data['playerScores']
@@ -147,12 +157,7 @@ async def SS_player_scores(player_id):
             ]
             logger.info('ScoreSaber基础歌曲数据处理完成')
             # 计算准度
-            i = 0
-            accuracy = []
-            for base in basescore:
-                acc = float(base) / float(maxscore[i])
-                accuracy.append(acc)
-                i += 1
+            accuracy = calculation.calculate_acc(basescore,maxscore)
 
             sash = ''
             # 排列歌曲的sash值
@@ -163,22 +168,23 @@ async def SS_player_scores(player_id):
             if beatsaver_to_scoresaber == None:
                 return None
             else:
-                pass     
+                pass
+
             song_id = []
             song_bpm = []
             # .values()函数遍历全部字典中的值(而不是遍历被赋值的键)
             for summary in beatsaver_to_scoresaber.values():
-                # 想不通为什么这api竟然会有这么多的id赋值...
                 # 判断是否存在id
                 if summary and 'id' in summary != None:
                     song_id.append(summary['id'])
                 else:
                     pass
+
                 if summary and 'metadata' in summary != None:
                     song_bpm.append(summary['metadata']['bpm'])
                 else: 
                     pass
-
+                
             song_difficulty = []
             for numbers in song_difficulty_numbers:
                 if numbers == int(1):
@@ -249,3 +255,9 @@ async def search_beatsaver(song_id = None,song_hash = None):
         else:
             logger.warning('获取歌曲数据发生错误')
             return None
+
+async def beatsaver_timing():
+    return
+
+async def beatsaver_vote():
+    return
