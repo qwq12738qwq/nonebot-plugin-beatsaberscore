@@ -19,7 +19,7 @@ def contrast(new_id_data,new_pp_data,old_id_data,old_pp_data):
     record = list(set(contrast) - set(statistics))
     return record
 
-def calculate_position(record,start_x_offset = 170,start_y_position = 1750,change = 0):
+async def calculate_position(record,start_x_offset = 170,start_y_position = 1750,change = 0):
     if record == 0:
         position = (start_x_offset, start_y_position)
         return position
@@ -30,7 +30,7 @@ def calculate_position(record,start_x_offset = 170,start_y_position = 1750,chang
     y_change = start_y_position
     while record >= i:
         i += 1
-        x_change += change + 65
+        x_change += change + 70
         if x_change > 3600:
             x_change = start_x_offset
             y_change += 550
@@ -38,15 +38,6 @@ def calculate_position(record,start_x_offset = 170,start_y_position = 1750,chang
             pass
     position = (x_change, y_change)
     return position
-
-def calculate_acc(basescore,maxscore):
-    i = 0
-    accuracy = []
-    for base in basescore:
-        acc = float(base) / float(maxscore[i])
-        accuracy.append(acc)
-        i += 1
-    return accuracy
 
 def calculate_acc_note(goal_acc,total_notes):
     max_note_score = 115 
@@ -57,9 +48,33 @@ def calculate_acc_note(goal_acc,total_notes):
     score_2x = 4
     score_4x = 8
     score_8x = total_notes - (score_1x + score_2x + score_4x)
-    # 计算总得分(加个括号好看点)
     total_score = score_1x * max_note_score + (score_2x * max_note_score) * 2 + (score_4x * max_note_score) * 4 + (score_8x * max_note_score) * 8
     goal_score = total_score * float(goal_acc / 100)
+    hight_total_score = score_1x * hight_average_score + (score_2x * hight_average_score) * 2 + (score_4x * hight_average_score) * 4 + (score_8x * hight_average_score) * 8
+    low_total_score = score_1x * low_average_score + (score_2x * low_average_score) * 2 + (score_4x * low_average_score) * 4 + (score_8x * low_average_score) * 8
+    max_hight_average_acc = hight_total_score / total_score * 100
+    max_low_average_acc = low_total_score / total_score * 100
+    low_miss_note_scores = total_score * ((max_low_average_acc - goal_acc) / 100)
+    hight_miss_note_scores = total_score * ((max_hight_average_acc - goal_acc) / 100)
+    info_low = info_hight = None
+    # 判断平均分是否可以达到目标准度
+    if max_low_average_acc - goal_acc < 0:
+        low_miss_note = '无法达到目标准度'
+    else:
+        low_miss_note = (total_score - low_miss_note_scores) // (8 + (4 * score_4x))
+
+    if max_hight_average_acc - goal_acc < 0:
+        hight_miss_note = '无法达到目标准度'
+    else:
+        hight_miss_note = (total_score - hight_miss_note_scores) // (8 + (4 * score_4x))
+
+    return {
+        'info_hight': info_hight,
+        'info_low': info_low,
+        'double_max_miss': hight_miss_note,
+        'goal_score': goal_score
+        }
+'''
     # 无倍数情况下计算最大miss个数
     no_double_max_score_miss = int((total_score - goal_score) / max_note_score * 8)
     no_double_hight_average_score_miss = int((total_score - goal_score) / (hight_average_score * (8 + (4 * score_4x))))
@@ -73,9 +88,4 @@ def calculate_acc_note(goal_acc,total_notes):
     goal_score = str(goal_score)
     double_hight_average_score_miss = str(double_hight_average_score_miss)
     double_low_average_score_max_miss = str(double_low_average_score_max_miss)
-    return {
-        'double_max_miss': double_max_miss,
-        'goal_score': goal_score,
-        'double_hight_average_score_miss': double_hight_average_score_miss,
-        'double_low_average_score_max_miss': double_low_average_score_max_miss
-        }
+'''

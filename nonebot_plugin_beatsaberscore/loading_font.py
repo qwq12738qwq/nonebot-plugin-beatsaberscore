@@ -2,7 +2,7 @@ from PIL import ImageFont
 from pathlib import Path
 from nonebot.log import logger
 
-def font_loader(font_size, font_name = None, font = 'arial-bold'):
+async def font_loader(font_size, font_name = None, font = 'arial-bold'):
     font_path = f'{Path(__file__).parent}/static/ttf/{font}.ttf'
     if font_name == None:
         pass
