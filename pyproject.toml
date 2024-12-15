@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "nonebot-plugin-beatsaberscore"
-version = "1.1.4"
-description = "Nonebot2的节奏光剑查分插件,支持BeatLeader&ScoreSaber查分,现更新1.1.4大版本o((>ω< ))o"
+version = "1.2.7"
+description = "Nonebot2的节奏光剑查分插件,支持BeatLeader&ScoreSaber查分o((>ω< ))o"
 authors = ["12738 <12738smp@Gmail.com>"]
 license = "GPL-3.0 license"
 readme = "README.md"
