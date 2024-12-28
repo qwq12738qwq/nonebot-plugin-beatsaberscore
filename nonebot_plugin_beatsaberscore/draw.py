@@ -42,6 +42,9 @@ async def draw_image(Ranks_datas,old_data,cache_dir,cache_file,data_dir,SS = Fal
     if old_data != {}:
         old_star = float(old_data['player']['player_stars'])
         old_pp = float(old_data['player']['player_pp'])
+        if float(Ranks_datas['player']['player_stars']) - float(old_star) < 0:
+            old_star = float(Ranks_datas['player']['player_stars'])
+            old_pp = float(Ranks_datas['player']['player_pp'])
     else:
         old_star = float(Ranks_datas['player']['player_stars'])
         old_pp = float(Ranks_datas['player']['player_pp'])
@@ -201,7 +204,10 @@ async def draw_image(Ranks_datas,old_data,cache_dir,cache_file,data_dir,SS = Fal
     font_difficulty = await loading_font.font_loader(font_size = project_size, font = 'HanYi')
     information = str('nonebot-plugin-beatsaberscore By qwq12738qwq | 数据仅供参考,不代表实际能力')
     bs_draw.text(((background_image_size[0] // 2) - len(information) - 1600, background_image_size[1] - project_size), information, font=font_difficulty, fill=(44, 106, 163))
-    background_image.save(f'{cache_dir}/BS_cache.png')
+    if SS == True:
+        background_image.save(f'{cache_dir}/SS_cache.png')
+    else:
+        background_image.save(f'{cache_dir}/BS_cache.png')
     with open(cache_file, "rb") as image_file:
             encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
     return encoded_string

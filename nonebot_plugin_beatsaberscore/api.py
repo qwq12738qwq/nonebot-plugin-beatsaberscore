@@ -63,6 +63,25 @@ async def BL_player_scores(player_id,text = False):
         return None
     else:
         pass
+
+    async with httpx.AsyncClient():
+        player_response = await retry.time_out_retry(f'https://api.beatleader.xyz/player/{player_id}', params = {'stats': 'true','keepOriginalId':'false'})
+        if player_response == None:
+            return None
+        else:
+            pass
+        player_data = player_response.json()
+        all_data['player'] = {
+            'player_stars': f"{(ster_pp / 40 * 0.96 / 52) * 0.9 + 0.075 * (i)}",
+            'player_name': f"{player_data.get('name')}",
+            'player_avatar': f"{player_data.get('avatar')}",
+            'player_pp': f"{player_data.get('pp')}",
+            'player_country': f"{player_data.get('country')}",
+            'player_rank': f"{player_data.get('rank')}",
+            'player_country_rank': f"{player_data.get('countryRank')}"
+            }
+        logger.info('获取BeatLeader玩家数据完成')
+
     date = date_response.json()
     date = date['data']
     i = 41
@@ -107,27 +126,9 @@ async def BL_player_scores(player_id,text = False):
         i += 1
         all_data['date'].update(songs)
     logger.info('获取BeatLeader歌曲数据完成')
-    
-    async with httpx.AsyncClient():
-        player_response = await retry.time_out_retry(f'https://api.beatleader.xyz/player/{player_id}', params = {'stats': 'true','keepOriginalId':'false'})
-        if player_response == None:
-            return None
-        else:
-            pass
-        player_data = player_response.json()
-        all_data['player'] = {
-            'player_stars': f"{(ster_pp / 40 * 0.96 / 52) * 0.9 + 3}",
-            'player_name': f"{player_data.get('name')}",
-            'player_avatar': f"{player_data.get('avatar')}",
-            'player_pp': f"{player_data.get('pp')}",
-            'player_country': f"{player_data.get('country')}",
-            'player_rank': f"{player_data.get('rank')}",
-            'player_country_rank': f"{player_data.get('countryRank')}"
-            }
-        logger.info('获取BeatLeader玩家数据完成')
-        return all_data
+    return all_data
 
-async def SS_player_scores(player_id,text = False):
+async def SS_player_scores(player_id,text = False,old_data = {}):
     if text == True:
         async with httpx.AsyncClient():
             response = await retry.time_out_retry(url = f'https://scoresaber.com/api/player/{player_id}/scores', params = {'sort': 'top','limit': '1','page':'1'}, retries = 4)
@@ -160,19 +161,11 @@ async def SS_player_scores(player_id,text = False):
             pass
         # 标识歌曲,防止字典冲突
         if datas.get('accLeft') == float(0) or datas.get('accRight') == float(0):
-            print(1)
             OneSaber = '|'
         else:
             OneSaber = ''
         # 计算准度
         accuracy = float(datas['score']['baseScore']) / float(datas['leaderboard']['maxScore'])
-        # hash转化成id
-        beatsaver_to_scoresaber = await search_beatsaver(song_hash = datas['leaderboard']['songHash'])
-        if beatsaver_to_scoresaber == None:
-            return None
-        else:
-            id = beatsaver_to_scoresaber['id']
-            bpm = beatsaver_to_scoresaber['metadata']['bpm']
         # 准度转化
         if datas['leaderboard']['difficulty']['difficulty'] == int(1):
             difficulty = 'Easy'
@@ -184,6 +177,16 @@ async def SS_player_scores(player_id,text = False):
             difficulty = 'Expert'
         else:
             difficulty = 'ExpertPlus'
+        # hash转化成id
+        try:
+            id = old_data[f"{datas['leaderboard']['songName']}{difficulty}{OneSaber}"]['id']
+            bpm = old_data[f"{datas['leaderboard']['songName']}{difficulty}{OneSaber}"]['bpm']
+        except:
+            beatsaver_to_scoresaber = await search_beatsaver(song_hash = datas['leaderboard']['songHash'])
+            if beatsaver_to_scoresaber == None:
+                return None
+            id = beatsaver_to_scoresaber['id']
+            bpm = beatsaver_to_scoresaber['metadata']['bpm']
         songs = {
             f"{datas['leaderboard']['songName']}{difficulty}{OneSaber}": {
                 'id': f"{id}",
@@ -211,7 +214,7 @@ async def SS_player_scores(player_id,text = False):
             pass
         player_data = player_response.json()
         all_data['player'] = {
-            'player_stars': f"{(ster_pp / 40 * 0.96 / 52) * 0.9 + 3}",
+            'player_stars': f"{(ster_pp / 40 * 0.96 / 52) * 0.9 + 0.075 * (i)}",
             'player_name': f"{player_data.get('name')}",
             'player_avatar': f"{player_data.get('profilePicture')}",
             'player_pp': f"{player_data.get('pp')}",

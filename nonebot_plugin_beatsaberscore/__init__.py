@@ -14,7 +14,7 @@ import nonebot_plugin_localstore as store
 from .config import Config, SUPERUSERS
 from . import api, draw, storage, retry, calculation
 
-__version__ = "1.2.7"
+__version__ = "1.3.2"
 __plugin_meta__ = PluginMetadata(
     name="Beat Saber查分器",
     description="Nonebot2的节奏光剑查分插件,支持BeatLeader&ScoreSaber查分o((>ω< ))o",
@@ -81,17 +81,21 @@ async def handle_SSScore(bot: Bot, event: Event):
         await SS_Score.finish('该账号未绑定SteamID')
     else:
         pass
-    await SS_Score.send(MessageSegment.at(QQ_id) + f'\n正在使用ScoreSaber查分,请耐心等待~')
-    BS_data = await api.SS_player_scores(player_id)
-    if BS_data == None:
-        await SS_Score.finish('没注册ScoreSaber或者网络出问题力QAQ')
     try:
         with open(f'{store.get_plugin_data_dir()}/{QQ_id}.json', 'r', encoding='utf-8') as data:
             old_data = json.load(data)
         old_data = old_data['SS_data']
+        id_data = old_data['songs']
     except:
-        old_data = {}
-    bs_image = await draw.draw_image(Ranks_datas = BS_data,old_data = old_data,cache_dir = store.get_plugin_cache_dir(),cache_file = store.get_plugin_cache_file('BS_cache.png'),data_dir = store.get_plugin_data_dir(),SS = True)
+        id_data = old_data = {}
+    if old_data == {}:
+        await SS_Score.send(MessageSegment.at(QQ_id) + f'\n第一次使用ScoreSaber查分,请耐心等待~')
+    else:
+        pass
+    BS_data = await api.SS_player_scores(player_id,old_data = id_data)
+    if BS_data == None:
+        await SS_Score.finish('没注册ScoreSaber或者网络出问题力QAQ')
+    bs_image = await draw.draw_image(Ranks_datas = BS_data,old_data = old_data,cache_dir = store.get_plugin_cache_dir(),cache_file = store.get_plugin_cache_file('SS_cache.png'),data_dir = store.get_plugin_data_dir(),SS = True)
     if bs_image is None:
         await SS_Score.finish('绘图失败力')
     else:
@@ -102,7 +106,7 @@ async def handle_SSScore(bot: Bot, event: Event):
     storage.save_user_data(QQ_id,data_dir = store.get_plugin_data_dir(),datas = BS_data,SS = True)
     try:
         # 删除缓存
-        os.remove(store.get_plugin_cache_file('BS_cache.png'))
+        os.remove(store.get_plugin_cache_file('SS_cache.png'))
     except:
         pass
     return
