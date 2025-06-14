@@ -7,17 +7,15 @@
 <div align="center">
   
 </div>
-
-## 高考前暂停更新  
+ 
 
 > [!IMPORTANT]
-> 此版本修复大量已知bug,建议更新!!!
+> 此版本更新缓存管理机制,以及修复些已知问题
 
 ## 📖 介绍
 
 Nonebot2的节奏光剑BeatLeader&ScoreSaber查分(ﾉ≧∀≦)ﾉ
 
-~~咕噜咕噜咕噜~~
 
 ## 💿 安装(以下选择其一安装即可)
 <details open>
@@ -78,6 +76,7 @@ Nonebot2的节奏光剑BeatLeader&ScoreSaber查分(ﾉ≧∀≦)ﾉ
 | BS_RETRIES | 否 | 8 | 网络错误重试次数 |
 | BS_TIMEOUT | 否 | 5 | 网络超时时间 |
 | COMMAND_START | 否 | [] | 响应前缀设置 |
+| BS_LIMIT_CACHE | 否 | 1500 | 缓存图片个数限制 |
 
 PS:最好是有科学上网,如果没有,BS_RETRIES向建议调至6以上
 
@@ -109,20 +108,17 @@ PS:最好是有科学上网,如果没有,BS_RETRIES向建议调至6以上
 
 ***Song计算准度***  
 > [!NOTE]
-> 此功能尚未完善,暂不放出来用了
+> 此功能尚未完善,暂不放出来用了(我是菜逼)
 
 
 **SteamID是什么?**
 
- 在登入` beatleader.xyz `后打开个人信息
+ 在登入` beatleader.xyz `后打开个人信息(也可打开Scoresaber,Steam账户网址,操作是一样的)
  
- <img src='./explanation.png'>
+ <img src='./explanation.png'><br>
  
  这个就是你的` SteamID `辣(即使ID不是纯数字也是可以用的)
 
- 即使是scoresaber排行榜网站也是同理
- 
- 也可以到Steam个人主页去找SteamID,这里就不多赘述了
 
 ## ✨ 未来规划
 - [X] 添加对ScoreSaber的查分支持
@@ -134,51 +130,83 @@ PS:最好是有科学上网,如果没有,BS_RETRIES向建议调至6以上
 
 
 ## 📝 更新日志
+### 1.3.5
+- 新增 缓存管理机制<br>
+- 更新 星评图标<br>
+- 修复 对Windows系统环境下的一些报错问题<br>
+- 修复 生成图片异常过大问题
+<details>
+<summary>📌往期更新内容</summary> 
+
 ### 1.3.2
-- 修复 ScoreSaber查分运行性能问题
+<details>
+<summary>更新内容</summary>  
+- 修复 ScoreSaber查分运行性能问题<br>
 - 修复 一处小问题
+</details>
+
 ### 1.2.7 ----混沌
-- 新增 缓存机制(提升插件性能)
-- 更新 SS+,SS,S,A准度评级图标
-- 修复 A评级的准度区间
-- 修复 ScoreSaber获取歌曲id缺失问题
-- 修复 之前极少数用户查分报错问题(已找到原因)
-- 修复 准度评级图标的偏移值
-- 修复 ScoreSaber&BeatLeader并发查分的报错
-- 优化 删除大量无意义循环,大幅精简代码
-- 优化 查分图和消息响应的一些细节
+<details>
+<summary>更新内容</summary>  
+- 新增 缓存机制(提升插件性能)<br>
+- 更新 SS+,SS,S,A准度评级图标<br>
+- 修复 A评级的准度区间<br>
+- 修复 ScoreSaber获取歌曲id缺失问题<br>
+- 修复 之前极少数用户查分报错问题(已找到原因)<br>
+- 修复 准度评级图标的偏移值<br>
+- 修复 ScoreSaber&BeatLeader并发查分的报错<br>
+- 优化 删除大量无意义循环,大幅精简代码<br>
+- 优化 查分图和消息响应的一些细节<br>
 - 以及一个大胆的尝试
+</details>
+
 ### 1.1.4 ----**大道至简**
-- **大幅改动排版,全面重绘查分图!!!**
-- 更新 简陋的歌曲准度计算
-- 更新 指令触发细节优化,对一些地方进行细节优化
-- 新增 SS+,SS,S,A的准度评级
-- 新增 左|右手准度数据(现阶段仅支持beatleader)
-- 更改 下调pyproject.toml的httpx,pillow版本依赖(应该可以增强与其他Nonebot插件共存兼容性?)
+<details>
+<summary>更新内容</summary>  
+- **大幅改动排版,全面重绘查分图!!!**<br>
+- 更新 简陋的歌曲准度计算<br>
+- 更新 指令触发细节优化,对一些地方进行细节优化<br>
+- 新增 SS+,SS,S,A的准度评级<br>
+- 新增 左|右手准度数据(现阶段仅支持beatleader)<br>
+- 更改 下调pyproject.toml的httpx,pillow版本依赖<br>
 - 添加 b40,s40指令触发
+</details>
+
 ### 0.9.7.post2
+<details>
+<summary>更新内容</summary>  
 - 修复 [#2](https://github.com/qwq12738qwq/nonebot-plugin-beatsaberscore/issues/2)
 ### 0.9.7
-- ~~修复 [#2](https://github.com/qwq12738qwq/nonebot-plugin-beatsaberscore/issues/2)~~
+- ~~修复 [#2](https://github.com/qwq12738qwq/nonebot-plugin-beatsaberscore/issues/2)~~<br>
 - 更改了下存储数据的逻辑
+</details>
+
 ### 0.9.6
-- 新增 [ScoreSaber的查分支持](https://github.com/qwq12738qwq/nonebot-plugin-beatsaberscore/issues/1)
+<details>
+<summary>更新内容</summary> 
+- 新增 [ScoreSaber的查分支持](https://github.com/qwq12738qwq/nonebot-plugin-beatsaberscore/issues/1)<br>
 - 修复 绑定错误ID时返回的一些错误信息进行修正
+</details>
+
 ### 0.9.3
+<details>
+<summary>更新内容</summary> 
 - 增加了歌曲id的搜歌功能
+</details>
+
 ### 0.9.0
+<details>
+<summary>更新内容</summary> 
 - 完成基础的beatleader查分
+</details>
+</details>
 
 ## 🔍 已知问题
-缓存自管理机制,适应小内存的环境(未完工,本次更新不影响下个版本的缓存管理)  
 
-绑定信息存在本地,如果换Bot查分的话你需要再绑定一次~  
+绑定信息存在本地,如果换Bot查分的话你需要再绑定一次~,之后可能会自建api保存对应数据吧(可能,也许)
 
-## 🗨️ 想说的话
+## 🗨️ PS
 之后的某些更新可能需要借助BeatLeader完成对ScoreSaber查分图的优化  
-建议**两个排行榜一起用**捏(两个一起用不好嘛( >﹏<。))
-
-本人代码写的比较烂,谨慎pr~~
 
 如果你有更好的想法和建议,随时欢迎提出issues~(●´∀｀●)
 
@@ -198,4 +226,5 @@ enjoy~(●′ω`●)
 
 ## 🚧 测试
 测试环境  
+Windows-Server-2025
 Unraid-6.11.5 Docker-20.10.21 Ubuntu-24.04 python-3.12.3 nonebot2-2.3.0 httpx-0.23.1 pillow-10.4.0  

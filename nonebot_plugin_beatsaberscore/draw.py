@@ -120,7 +120,7 @@ async def draw_image(Ranks_datas,old_data,cache_dir,cache_file,data_dir,SS = Fal
         # 位置计算
         position = await calculation.calculate_position(record = int(datas['position']),change = crop_size[2])
         # 下载歌曲图片
-        song_image = await download_image(total_song = datas['image_url'], cache_dir = cache_dir, save_name = datas['id'],data_dir = data_dir,save_id = datas['id'])
+        song_image = await download_image(total_song = datas['image_url'], cache_dir = cache_dir, save_name = datas['id'],data_dir = Path(data_dir),save_id = datas['id'])
         # 处理歌曲图片
         if song_image:
             song_image = song_image.convert('RGBA')
@@ -199,15 +199,14 @@ async def draw_image(Ranks_datas,old_data,cache_dir,cache_file,data_dir,SS = Fal
         bs_draw.text((position[0] + difficulty_size + 3, position[1]), f"{float(datas['stars']):.2f}", font=font_difficulty, fill=(255, 255, 225))
 
     logger.info('图片绘制处理完毕')
-    # 做点标记
     project_size = 80
     font_difficulty = await loading_font.font_loader(font_size = project_size, font = 'HanYi')
     information = str('nonebot-plugin-beatsaberscore By qwq12738qwq | 数据仅供参考,不代表实际能力')
     bs_draw.text(((background_image_size[0] // 2) - len(information) - 1600, background_image_size[1] - project_size), information, font=font_difficulty, fill=(44, 106, 163))
     if SS == True:
-        background_image.save(f'{cache_dir}/SS_cache.png')
+        background_image.convert("RGB").save(f'{cache_dir}/SS_cache.jpg', "JPEG", quality=15)
     else:
-        background_image.save(f'{cache_dir}/BS_cache.png')
+        background_image.convert("RGB").save(f'{cache_dir}/BS_cache.jpg', "JPEG", quality=15)
     with open(cache_file, "rb") as image_file:
             encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
     return encoded_string
@@ -220,7 +219,6 @@ async def player_image(player_addr):
         try:
             avatar_data = BytesIO(get_avatar.content)
             try:
-                # 尝试打开图像数据
                 return Image.open(avatar_data)
             except IOError:
                 return None

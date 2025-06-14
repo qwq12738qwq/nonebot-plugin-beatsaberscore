@@ -1,5 +1,5 @@
 import os
-import re
+from pathlib import Path
 import json
 # import subprocess
 # from nonebot.log import logger
@@ -9,12 +9,12 @@ from nonebot.plugin import PluginMetadata
 from nonebot import require
 require('nonebot_plugin_localstore')
 import nonebot_plugin_localstore as store
-# require('nonebot_plugin_apscheduler')
-# from nonebot_plugin_apscheduler import scheduler
+require('nonebot_plugin_apscheduler')
+from nonebot_plugin_apscheduler import scheduler
 from .config import Config, SUPERUSERS
-from . import api, draw, storage, retry, calculation
+from . import api, draw, storage, retry, cache
 
-__version__ = "1.3.2"
+__version__ = "1.3.5"
 __plugin_meta__ = PluginMetadata(
     name="Beat Saber查分器",
     description="Nonebot2的节奏光剑查分插件,支持BeatLeader&ScoreSaber查分o((>ω< ))o",
@@ -31,12 +31,18 @@ BL_Score = on_command('BL score', aliases={'BL查分', 'bl查分', 'bl40', 'BL40
 
 @BL_Score.handle()
 async def handle_BLScore(bot: Bot, event: Event):
+    # 对Windows平台下做出适配
+    Dir_Path = Path(f"{store.get_plugin_data_dir()}")
+    if Path(store.get_plugin_data_file('BSgroup.json')).exists():
+        pass
+    else:
+        await BL_Score.finish("你还没绑定SteamID~~~")
     # 读取QQ号
     QQ_id = event.get_user_id()
     # 读取QQ号的BS_id
     player_id = await handle_BSid(QQ_id)
     if player_id == None :
-        await BL_Score.finish('该账号未绑定SteamID')
+        await BL_Score.finish('你还没绑定SteamID~~~')
     else:
         pass
     BL_datas = await api.BL_player_scores(player_id)
@@ -45,13 +51,13 @@ async def handle_BLScore(bot: Bot, event: Event):
     else:
         pass
     try:
-        with open(f'{store.get_plugin_data_dir()}/{QQ_id}.json', 'r', encoding='utf-8') as data:
+        with open(f'{Dir_Path}/{QQ_id}.json', 'r', encoding='utf-8') as data:
             old_data = json.load(data)
         old_data = old_data['BL_data']
     except:
         old_data = {}
         await BL_Score.send(MessageSegment.at(QQ_id) + f'\n第一次使用BeatLeader查分,请耐心等待~')
-    bs_image = await draw.draw_image(Ranks_datas = BL_datas,old_data = old_data,cache_dir = store.get_plugin_cache_dir(),cache_file = store.get_plugin_cache_file('BS_cache.png'),data_dir = store.get_plugin_data_dir())
+    bs_image = await draw.draw_image(Ranks_datas = BL_datas,old_data = old_data,cache_dir = Path(store.get_plugin_cache_dir()),cache_file = store.get_plugin_cache_file('BS_cache.jpg'),data_dir = Path(store.get_plugin_data_dir()))
     if bs_image is None:
         await BL_Score.finish('绘图失败力')
     else:
@@ -62,7 +68,7 @@ async def handle_BLScore(bot: Bot, event: Event):
     await BL_Score.send(MessageSegment.at(QQ_id) + f'\n[BeatLeader]' + MessageSegment.image(image_base64))
     try:
         # 删除缓存
-        os.remove(store.get_plugin_cache_file('BS_cache.png'))
+        os.remove(store.get_plugin_cache_file('BS_cache.jpg'))
     except:
         pass
     return
@@ -73,16 +79,22 @@ SS_Score = on_command('SS score', aliases={'SS查分', 'ss查分', 'ss40', 'SS40
 @SS_Score.handle()
 # 复制粘贴
 async def handle_SSScore(bot: Bot, event: Event):
+    # 对Windows平台下做出路径适配
+    Dir_Path = Path(f"{store.get_plugin_data_dir()}")
+    if Path(store.get_plugin_data_file('BSgroup.json')).exists():
+        pass
+    else:
+        await SS_Score.finish("你还没绑定SteamID~~~")
     # 读取QQ号
     QQ_id = event.get_user_id()
     # 读取QQ号的BS_id
     player_id = await handle_BSid(QQ_id)
     if player_id == 114514 :
-        await SS_Score.finish('该账号未绑定SteamID')
+        await SS_Score.finish('你还没绑定SteamID~~~')
     else:
         pass
     try:
-        with open(f'{store.get_plugin_data_dir()}/{QQ_id}.json', 'r', encoding='utf-8') as data:
+        with open(f'{Dir_Path}/{QQ_id}.json', 'r', encoding='utf-8') as data:
             old_data = json.load(data)
         old_data = old_data['SS_data']
         id_data = old_data['songs']
@@ -95,7 +107,7 @@ async def handle_SSScore(bot: Bot, event: Event):
     BS_data = await api.SS_player_scores(player_id,old_data = id_data)
     if BS_data == None:
         await SS_Score.finish('没注册ScoreSaber或者网络出问题力QAQ')
-    bs_image = await draw.draw_image(Ranks_datas = BS_data,old_data = old_data,cache_dir = store.get_plugin_cache_dir(),cache_file = store.get_plugin_cache_file('SS_cache.png'),data_dir = store.get_plugin_data_dir(),SS = True)
+    bs_image = await draw.draw_image(Ranks_datas = BS_data,old_data = old_data,cache_dir = Path(store.get_plugin_cache_dir()),cache_file = store.get_plugin_cache_file('SS_cache.jpg'),data_dir = Path(store.get_plugin_data_dir()),SS = True)
     if bs_image is None:
         await SS_Score.finish('绘图失败力')
     else:
@@ -106,7 +118,7 @@ async def handle_SSScore(bot: Bot, event: Event):
     storage.save_user_data(QQ_id,data_dir = store.get_plugin_data_dir(),datas = BS_data,SS = True)
     try:
         # 删除缓存
-        os.remove(store.get_plugin_cache_file('SS_cache.png'))
+        os.remove(store.get_plugin_cache_file('SS_cache.jpg'))
     except:
         pass
     return
@@ -216,7 +228,7 @@ async def send_BS_Search(bot: Bot,event: GroupMessageEvent):
     
     song_anydata =  MessageSegment.text(f"歌曲:{song_information['metadata']['songName']}\n曲师:{song_information['metadata']['songAuthorName']}\n谱面制作:{song_information['metadata']['levelAuthorName']}\nbpm:{song_information['metadata']['bpm']}\n排位曲:{rank_info}\n歌曲难度(BeatLeader)\n{rank_star}")
     await bot.send_group_msg(group_id = event.group_id, message = Message(song_cover + song_anydata))
-    song_download = await retry.download_song_preview(url = song_preview,cache_path = store.get_plugin_cache_dir())
+    song_download = await retry.download_song_preview(url = song_preview,cache_path = Path(store.get_plugin_cache_dir()))
     if song_download == None:
         await BS_Search.finish('歌曲下载出错辣!')
     else:
@@ -231,48 +243,59 @@ BS_Help = on_command('BS help', aliases={'节奏光剑帮助', 'BS帮助'}, prio
 async def send_BS_Help():
     await BS_Help.finish('具体请查阅https://github.com/qwq12738qwq/nonebot-plugin-beatsaberscore的使用部分 (´・ω・`) ')
 
-BS_calculate_acc = on_command('calculation', aliases={'谱面计算', '计算'}, priority=8)
+@scheduler.scheduled_job("interval",seconds=10)
+async def Handle_Clean_Images():
+    await cache.cache_manager(cache_file_path = Path(store.get_plugin_cache_dir()))
+    return None
 
-@BS_calculate_acc.handle()
-async def send_BS_calculation_acc(bot: Bot,event: GroupMessageEvent):
-    message = str(event.get_message())
-    if message == '':
-        await BS_calculate_acc.finish('啥都没输入捏')
-    else:
-        pass
-    msg_goal_acc = str(message.replace('calculation', '').replace('谱面计算', '').replace('计算', '').strip())
-    # 提取准度(匹配数字+小数点+%号)
-    msg_goal_acc = re.search(r'\d+\.\d+%', msg_goal_acc)
-    if msg_goal_acc == None:
-        await BS_calculate_acc.finish('是不是少了准度没输入捏（＞д＜）')
-    goal_acc = msg_goal_acc.group()
-    # 提取歌曲ID
-    song_id = message.replace(f'{goal_acc}', '').replace(f'Easy', '').replace(f'Normal', '').replace(f'Hard', '').replace(f'Expert', '').replace(f'ExpertPlus', '').replace('calculation', '').replace('谱面计算', '').replace('计算', '').strip()
-    # 提取歌曲难度
-    song_difficulty = (message.replace(f'{goal_acc}', '').replace(f'{song_id}', '').replace('calculation', '').replace('谱面计算', '').replace('计算', '').strip())
-    song_information = await api.search_beatsaver(song_id)
-    if song_information == None:
-        await BS_calculate_acc.finish('网络出问题辣,请重试一次吧（｀＾´）')
-    else:
-        pass
-    song_cover = MessageSegment.image(song_information['versions'][0]['coverURL'])
-    song_diffs = []
-    song_maxnotes = []
-    diffs_to_maxscore = {}
-    # 提取难度
-    for version in song_information['versions']:
-        for diffs in version['diffs']:
-            song_diffs.append(diffs['difficulty'])
-        for maxscore in version['diffs']:
-            song_maxnotes.append(maxscore['notes'])
-    # 去掉%用于计算
-    i = 0
-    for diffs in song_diffs:
-        diffs_to_maxscore[f'{diffs}'] = song_maxnotes[i]
-        i += 1
 
-    total_notes =  diffs_to_maxscore[f'{song_difficulty}']
-    goal_acc = (message.replace(f'{song_id}', '').replace('%', '').replace(f'Easy', '').replace(f'Normal', '').replace(f'Hard', '').replace(f'Expert', '').replace(f'ExpertPlus', '').replace('calculation', '').replace('谱面计算', '').replace('计算', '').strip())
-    calculation_acc = calculation.calculate_acc_note(goal_acc = float(goal_acc), total_notes = int(total_notes))
-    song_info = f"歌曲:{song_information['metadata']['songName']}\n歌曲难度:{song_difficulty}\n总Note数:{total_notes}\n达到{goal_acc}%在平均分110不连续miss情况下最大miss次数:{(calculation_acc['double_max_miss'])}\n达到{goal_acc}%需要获得的分数:{calculation_acc['goal_score']}"
-    await BS_calculate_acc.finish(group_id = event.group_id, message = Message(song_cover + song_info))
+
+
+
+
+
+# BS_calculate_acc = on_command('calculation', aliases={'谱面计算', '计算'}, priority=8)
+
+# @BS_calculate_acc.handle()
+# async def send_BS_calculation_acc(bot: Bot,event: GroupMessageEvent):
+#     message = str(event.get_message())
+#     if message == '':
+#         await BS_calculate_acc.finish('啥都没输入捏')
+#     else:
+#         pass
+#     msg_goal_acc = str(message.replace('calculation', '').replace('谱面计算', '').replace('计算', '').strip())
+#     # 提取准度(匹配数字+小数点+%号)
+#     msg_goal_acc = re.search(r'\d+\.\d+%', msg_goal_acc)
+#     if msg_goal_acc == None:
+#         await BS_calculate_acc.finish('是不是少了准度没输入捏（＞д＜）')
+#     goal_acc = msg_goal_acc.group()
+#     # 提取歌曲ID
+#     song_id = message.replace(f'{goal_acc}', '').replace(f'Easy', '').replace(f'Normal', '').replace(f'Hard', '').replace(f'Expert', '').replace(f'ExpertPlus', '').replace('calculation', '').replace('谱面计算', '').replace('计算', '').strip()
+#     # 提取歌曲难度
+#     song_difficulty = (message.replace(f'{goal_acc}', '').replace(f'{song_id}', '').replace('calculation', '').replace('谱面计算', '').replace('计算', '').strip())
+#     song_information = await api.search_beatsaver(song_id)
+#     if song_information == None:
+#         await BS_calculate_acc.finish('网络出问题辣,请重试一次吧（｀＾´）')
+#     else:
+#         pass
+#     song_cover = MessageSegment.image(song_information['versions'][0]['coverURL'])
+#     song_diffs = []
+#     song_maxnotes = []
+#     diffs_to_maxscore = {}
+#     # 提取难度
+#     for version in song_information['versions']:
+#         for diffs in version['diffs']:
+#             song_diffs.append(diffs['difficulty'])
+#         for maxscore in version['diffs']:
+#             song_maxnotes.append(maxscore['notes'])
+#     # 去掉%用于计算
+#     i = 0
+#     for diffs in song_diffs:
+#         diffs_to_maxscore[f'{diffs}'] = song_maxnotes[i]
+#         i += 1
+
+#     total_notes =  diffs_to_maxscore[f'{song_difficulty}']
+#     goal_acc = (message.replace(f'{song_id}', '').replace('%', '').replace(f'Easy', '').replace(f'Normal', '').replace(f'Hard', '').replace(f'Expert', '').replace(f'ExpertPlus', '').replace('calculation', '').replace('谱面计算', '').replace('计算', '').strip())
+#     calculation_acc = calculation.calculate_acc_note(goal_acc = float(goal_acc), total_notes = int(total_notes))
+#     song_info = f"歌曲:{song_information['metadata']['songName']}\n歌曲难度:{song_difficulty}\n总Note数:{total_notes}\n达到{goal_acc}%在平均分110不连续miss情况下最大miss次数:{(calculation_acc['double_max_miss'])}\n达到{goal_acc}%需要获得的分数:{calculation_acc['goal_score']}"
+#     await BS_calculate_acc.finish(group_id = event.group_id, message = Message(song_cover + song_info))
