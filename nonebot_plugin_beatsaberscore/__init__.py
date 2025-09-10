@@ -11,10 +11,10 @@ require('nonebot_plugin_localstore')
 import nonebot_plugin_localstore as store
 require('nonebot_plugin_apscheduler')
 from nonebot_plugin_apscheduler import scheduler
-from .config import Config, SUPERUSERS
+from .config import Config, SUPERUSERS, VERSION
 from . import api, draw, storage, retry, cache
 
-__version__ = "1.3.5"
+__version__ = VERSION
 __plugin_meta__ = PluginMetadata(
     name="Beat Saber查分器",
     description="Nonebot2的节奏光剑查分插件,支持BeatLeader&ScoreSaber查分o((>ω< ))o",
@@ -173,9 +173,9 @@ async def send_BS_Search(bot: Bot,event: GroupMessageEvent):
     message = str(event.get_message())
     # for Aliases in BS_Search.aliases:
     #     song_id = message.replace(f'{Aliases}', '').strip()
-    if message.replace('BS查歌', '').replace('BS search', '').replace('节奏光剑查歌', '').replace('bs查歌', '').strip() == '':
+    if message.replace('BS查歌', '').replace('BS search', '').replace('节奏光剑查歌', '').replace('bs查歌', '').replace('bsr', '').strip() == '':
         await BS_Search.finish('怎么啥都没写啊（｀＾´）')
-    song_id = message.replace('BS查歌', '').replace('BS search', '').replace('节奏光剑查歌', '').replace('bs查歌', '').strip()
+    song_id = message.replace('BS查歌', '').replace('BS search', '').replace('节奏光剑查歌', '').replace('bs查歌', '').replace('bsr', '').strip()
     for Prefix_Command in get_driver().config.command_start:
         song_id = song_id.replace(f'{Prefix_Command}', '').strip()
     song_information = await api.search_beatsaver(song_id)
@@ -197,7 +197,7 @@ async def send_BS_Search(bot: Bot,event: GroupMessageEvent):
                 SS_Stars = SS_Rank.get('stars')
                 ss_song_star.append(SS_Stars)
 
-        print(SS_Rank_List)
+        #print(SS_Rank_List)
     else:
         ranking_ScoreSaber = 'None'
     # 如果这首歌是BeatLeader的排位曲,则获取其中的star
