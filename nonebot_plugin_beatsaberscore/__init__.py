@@ -3,7 +3,7 @@ from pathlib import Path
 import json
 # import subprocess
 # from nonebot.log import logger
-from nonebot import on_command
+from nonebot import on_command, get_driver
 from nonebot.adapters.onebot.v11 import Bot, Event, Message, MessageSegment, GroupMessageEvent
 from nonebot.plugin import PluginMetadata
 from nonebot import require
@@ -166,17 +166,21 @@ async def handle_BSid(QQ_id):
         id = id.replace("'", "").replace("'", "")
         return id
     
-BS_Search = on_command('BS search', aliases={'节奏光剑查歌', 'BS查歌', 'bs查歌'}, priority=10)
+BS_Search = on_command('BS search', aliases={'节奏光剑查歌', 'BS查歌', 'bs查歌', 'bsr'}, priority=10)
 
 @BS_Search.handle()
 async def send_BS_Search(bot: Bot,event: GroupMessageEvent):
     message = str(event.get_message())
+    # for Aliases in BS_Search.aliases:
+    #     song_id = message.replace(f'{Aliases}', '').strip()
     if message.replace('BS查歌', '').replace('BS search', '').replace('节奏光剑查歌', '').replace('bs查歌', '').strip() == '':
         await BS_Search.finish('怎么啥都没写啊（｀＾´）')
     song_id = message.replace('BS查歌', '').replace('BS search', '').replace('节奏光剑查歌', '').replace('bs查歌', '').strip()
+    for Prefix_Command in get_driver().config.command_start:
+        song_id = song_id.replace(f'{Prefix_Command}', '').strip()
     song_information = await api.search_beatsaver(song_id)
     if song_information == None:
-        await BS_Search.finish('无法获取歌曲信息,可能是id错误?')
+        await BS_Search.finish(f"无法获取歌曲信息,可能是id错误?,https://beatsaver.com/maps/{song_id}")
     else:
         pass
     song_preview = song_information['versions'][0]['previewURL']
@@ -184,9 +188,16 @@ async def send_BS_Search(bot: Bot,event: GroupMessageEvent):
     song_rank = []
     song_rank.append(song_information['ranked'])
     song_rank.append(song_information['blRanked'])
-    # 判断这首歌是否是排位曲
+    # 如果是ScoreSaber排位曲,则获取其中的star
     if song_rank[0] == True:
         ranking_ScoreSaber = 'ScoreSaber'
+        ss_song_star = []
+        for SS_Rank_List in song_information['versions']:
+            for SS_Rank in SS_Rank_List['diffs']:
+                SS_Stars = SS_Rank.get('stars')
+                ss_song_star.append(SS_Stars)
+
+        print(SS_Rank_List)
     else:
         ranking_ScoreSaber = 'None'
     # 如果这首歌是BeatLeader的排位曲,则获取其中的star
@@ -197,17 +208,14 @@ async def send_BS_Search(bot: Bot,event: GroupMessageEvent):
         for version in song_information['versions']:
             for diffs in version['diffs']:
                 bl_stars = diffs.get('blStars')
-                if bl_stars != None:
-                    bl_song_star.append(bl_stars)
-                else:
-                    pass
+                bl_song_star.append(bl_stars)
                 bl_song_diffs.append(diffs['difficulty'])
     else:
         ranking_BeatLeader = 'None'
     rank_info = ''
     # 如果都不是排位曲,直接输出False
     rank_info = (f'{ranking_ScoreSaber} {ranking_BeatLeader}').replace('None', '')
-    if rank_info == '':
+    if ranking_BeatLeader == 'None' and ranking_ScoreSaber == 'None':
         rank_info = 'False'
     else:
         pass
@@ -217,16 +225,24 @@ async def send_BS_Search(bot: Bot,event: GroupMessageEvent):
     else:
         pass
     rank_star = ''
-    #判断是否是BeatLeader的Rank曲
+    # 判断是否是BeatLeader的Rank曲
     if ranking_BeatLeader != 'None':
         i = 0
         for star in bl_song_star:
             rank_star += f'{bl_song_diffs[i]}:★{star}\n'
             i += 1
     else:
-        rank_star = 'False'
-    
-    song_anydata =  MessageSegment.text(f"歌曲:{song_information['metadata']['songName']}\n曲师:{song_information['metadata']['songAuthorName']}\n谱面制作:{song_information['metadata']['levelAuthorName']}\nbpm:{song_information['metadata']['bpm']}\n排位曲:{rank_info}\n歌曲难度(BeatLeader)\n{rank_star}")
+        rank_star = 'False' 
+    ss_rank_star = ''
+    # 判断是否为ScoreSaer的Rank曲
+    if ranking_ScoreSaber != 'None':
+        i = 0
+        for star in ss_song_star:
+            ss_rank_star += f'{bl_song_diffs[i]}:★{ss_song_star[i]}\n'
+            i += 1
+    else:
+        ss_rank_star = ''
+    song_anydata =  MessageSegment.text(f"https://beatsaver.com/maps/{song_id}\n歌曲:{song_information['metadata']['songName']}\n曲师:{song_information['metadata']['songAuthorName']}\n谱面制作:{song_information['metadata']['levelAuthorName']}\nbpm:{song_information['metadata']['bpm']}\n排位曲:{rank_info}\n歌曲难度(BeatLeader)\n{rank_star}\n歌曲难度(scoresaber)\n{ss_rank_star}")
     await bot.send_group_msg(group_id = event.group_id, message = Message(song_cover + song_anydata))
     song_download = await retry.download_song_preview(url = song_preview,cache_path = Path(store.get_plugin_cache_dir()))
     if song_download == None:
