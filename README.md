@@ -77,6 +77,7 @@ Nonebot2的节奏光剑BeatLeader&ScoreSaber查分(ﾉ≧∀≦)ﾉ
 | BS_TIMEOUT | 否 | 5 | 网络超时时间 |
 | COMMAND_START | 否 | [] | 响应前缀设置 |
 | BS_LIMIT_CACHE | 否 | 1500 | 缓存图片个数限制 |
+| BS_FAST_DOWNLOAD | 否 | True | 并发下载开关 |
 
 PS:最好是有科学上网,如果没有,BS_RETRIES向建议调至6以上
 
@@ -104,6 +105,7 @@ PS:最好是有科学上网,如果没有,BS_RETRIES向建议调至6以上
 
 ***Song_ID查歌***
 
+可用``bsr``进行查歌(在COMMAND_START选项中配置 ``!`` 可使用``!bsr``查歌)  
 发送` BS search ` + 歌曲的ID或者` bs查歌 ` + 歌曲的id可以查询歌曲的信息
 
 ***Song计算准度***  
@@ -130,13 +132,29 @@ PS:最好是有科学上网,如果没有,BS_RETRIES向建议调至6以上
 
 
 ## 📝 更新日志
+### 1.4.2
+- 修复 某些ID绘制歌曲缺失&无法绘制的Bug<br>
+- 优化 增加异步并发,大幅缩短第一次查分所需时间,增强插件性能(可在配置中选择是否需要开启)
+
+<details>
+<summary>📌往期更新内容</summary> 
+
+### 1.3.7
+<details>
+<summary>更新内容</summary> 
+- 更新 查歌提供ScoreSaber排位曲星评<br>
+- 更新 查歌命令<br>
+- 修复 查歌错误插入响应命令
+</details>
+
 ### 1.3.5
+<details>
+<summary>更新内容</summary> 
 - 新增 缓存管理机制<br>
 - 更新 星评图标<br>
 - 修复 对Windows系统环境下的一些报错问题<br>
 - 修复 生成图片异常过大问题
-<details>
-<summary>📌往期更新内容</summary> 
+</details>
 
 ### 1.3.2
 <details>
@@ -164,7 +182,7 @@ PS:最好是有科学上网,如果没有,BS_RETRIES向建议调至6以上
 <details>
 <summary>更新内容</summary>  
 - **大幅改动排版,全面重绘查分图!!!**<br>
-- 更新 简陋的歌曲准度计算<br>
+- 更新 ~~简陋的歌曲准度计算~~<br>
 - 更新 指令触发细节优化,对一些地方进行细节优化<br>
 - 新增 SS+,SS,S,A的准度评级<br>
 - 新增 左|右手准度数据(现阶段仅支持beatleader)<br>
@@ -176,6 +194,7 @@ PS:最好是有科学上网,如果没有,BS_RETRIES向建议调至6以上
 <details>
 <summary>更新内容</summary>  
 - 修复 [#2](https://github.com/qwq12738qwq/nonebot-plugin-beatsaberscore/issues/2)
+
 ### 0.9.7
 - ~~修复 [#2](https://github.com/qwq12738qwq/nonebot-plugin-beatsaberscore/issues/2)~~<br>
 - 更改了下存储数据的逻辑
@@ -201,9 +220,7 @@ PS:最好是有科学上网,如果没有,BS_RETRIES向建议调至6以上
 </details>
 </details>
 
-## 🔍 已知问题
 
-绑定信息存在本地,如果换Bot查分的话你需要再绑定一次~,之后可能会自建api保存对应数据吧(可能,也许)
 
 ## 🗨️ PS
 之后的某些更新可能需要借助BeatLeader完成对ScoreSaber查分图的优化  

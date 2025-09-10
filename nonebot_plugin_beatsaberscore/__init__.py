@@ -11,10 +11,12 @@ require('nonebot_plugin_localstore')
 import nonebot_plugin_localstore as store
 require('nonebot_plugin_apscheduler')
 from nonebot_plugin_apscheduler import scheduler
-from .config import Config, SUPERUSERS
+from .config import Config, SUPERUSERS, VERSION
 from . import api, draw, storage, retry, cache
+from nonebot import get_driver
+import asyncio
 
-__version__ = "1.3.5"
+__version__ = VERSION
 __plugin_meta__ = PluginMetadata(
     name="Beat Saber查分器",
     description="Nonebot2的节奏光剑查分插件,支持BeatLeader&ScoreSaber查分o((>ω< ))o",
@@ -25,9 +27,24 @@ __plugin_meta__ = PluginMetadata(
     supported_adapters={"~onebot.v11"},
 )
 
+# 启动时运行的函数
+# @get_driver().on_startup
+# async def startup():
+#     # 重构Json文件防止之后发生字典读取错误
+#     os.remove(f'{store.get_plugin_data_dir()}')
+
+BS_sync_commad = on_command('BL score', aliases={'BS查分', 'bs查分', 'bs40', 'BS40'}, priority=10)
+
+# @BS_sync_commad.handle()
+# async def handle_BS_sync_commad(bot: Bot, event: Event):
+#     BS_Sync = await asyncio.gather(handle_BLScore(Bot, Event), handle_SSScore(Bot, Event))
+#     for result in BS_Sync:
+#         if result:
 
 
-BL_Score = on_command('BL score', aliases={'BL查分', 'bl查分', 'bl40', 'BL40', 'b40', 'B40', 'bl 40', 'BL 40', 'b 40', 'B 40', 'BS查分', 'bs查分', 'bs40', 'BS40'}, priority=10)
+
+
+BL_Score = on_command('BL score', aliases={'BL查分', 'bl查分', 'bl40', 'BL40', 'b40', 'B40', 'bl 40', 'BL 40', 'b 40', 'B 40'}, priority=10)
 
 @BL_Score.handle()
 async def handle_BLScore(bot: Bot, event: Event):
@@ -71,7 +88,7 @@ async def handle_BLScore(bot: Bot, event: Event):
         os.remove(store.get_plugin_cache_file('BS_cache.jpg'))
     except:
         pass
-    return
+    return bs_image
 
 
 SS_Score = on_command('SS score', aliases={'SS查分', 'ss查分', 'ss40', 'SS40', 'S40', 's40', 'SS 40', 'ss 40', 's 40', 'S 40', 'BS查分', 'bs查分', 'bs40', 'BS40'}, priority=10)
@@ -121,7 +138,7 @@ async def handle_SSScore(bot: Bot, event: Event):
         os.remove(store.get_plugin_cache_file('SS_cache.jpg'))
     except:
         pass
-    return
+    return bs_image
 
 BS_Bind = on_command('BS bind', aliases={'节奏光剑绑定', 'BS绑定', 'bs绑定'}, priority=10)
 
@@ -173,9 +190,9 @@ async def send_BS_Search(bot: Bot,event: GroupMessageEvent):
     message = str(event.get_message())
     # for Aliases in BS_Search.aliases:
     #     song_id = message.replace(f'{Aliases}', '').strip()
-    if message.replace('BS查歌', '').replace('BS search', '').replace('节奏光剑查歌', '').replace('bs查歌', '').strip() == '':
+    if message.replace('BS查歌', '').replace('BS search', '').replace('节奏光剑查歌', '').replace('bs查歌', '').replace('bsr', '').strip() == '':
         await BS_Search.finish('怎么啥都没写啊（｀＾´）')
-    song_id = message.replace('BS查歌', '').replace('BS search', '').replace('节奏光剑查歌', '').replace('bs查歌', '').strip()
+    song_id = message.replace('BS查歌', '').replace('BS search', '').replace('节奏光剑查歌', '').replace('bs查歌', '').replace('bsr', '').strip()
     for Prefix_Command in get_driver().config.command_start:
         song_id = song_id.replace(f'{Prefix_Command}', '').strip()
     song_information = await api.search_beatsaver(song_id)
@@ -197,7 +214,7 @@ async def send_BS_Search(bot: Bot,event: GroupMessageEvent):
                 SS_Stars = SS_Rank.get('stars')
                 ss_song_star.append(SS_Stars)
 
-        print(SS_Rank_List)
+        #print(SS_Rank_List)
     else:
         ranking_ScoreSaber = 'None'
     # 如果这首歌是BeatLeader的排位曲,则获取其中的star
@@ -242,7 +259,7 @@ async def send_BS_Search(bot: Bot,event: GroupMessageEvent):
             i += 1
     else:
         ss_rank_star = ''
-    song_anydata =  MessageSegment.text(f"https://beatsaver.com/maps/{song_id}\n歌曲:{song_information['metadata']['songName']}\n曲师:{song_information['metadata']['songAuthorName']}\n谱面制作:{song_information['metadata']['levelAuthorName']}\nbpm:{song_information['metadata']['bpm']}\n排位曲:{rank_info}\n歌曲难度(BeatLeader)\n{rank_star}\n歌曲难度(scoresaber)\n{ss_rank_star}")
+    song_anydata =  MessageSegment.text(f"https://beatsaver.com/maps/{song_id}\n歌曲:{song_information['metadata']['songName']}\n曲师:{song_information['metadata']['songAuthorName']}\n谱面制作:{song_information['metadata']['levelAuthorName']}\nbpm:{song_information['metadata']['bpm']}\n排位曲:{rank_info}\n歌曲难度(BeatLeader)\n{rank_star}\n歌曲难度(ScoreSaber)\n{ss_rank_star}")
     await bot.send_group_msg(group_id = event.group_id, message = Message(song_cover + song_anydata))
     song_download = await retry.download_song_preview(url = song_preview,cache_path = Path(store.get_plugin_cache_dir()))
     if song_download == None:
@@ -259,10 +276,10 @@ BS_Help = on_command('BS help', aliases={'节奏光剑帮助', 'BS帮助'}, prio
 async def send_BS_Help():
     await BS_Help.finish('具体请查阅https://github.com/qwq12738qwq/nonebot-plugin-beatsaberscore的使用部分 (´・ω・`) ')
 
-@scheduler.scheduled_job("interval",seconds=10)
-async def Handle_Clean_Images():
-    await cache.cache_manager(cache_file_path = Path(store.get_plugin_cache_dir()))
-    return None
+# @scheduler.scheduled_job("interval",seconds=10)
+# async def Handle_Clean_Images():
+#     await cache.cache_manager(cache_file_path = Path(store.get_plugin_cache_dir()))
+#     return None
 
 
 

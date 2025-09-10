@@ -1,10 +1,12 @@
 from PIL import Image, ImageDraw
 import httpx
+import asyncio
 import base64
 from io import BytesIO
 from . import retry, loading_font, corner, calculation, storage
 from nonebot.log import logger
 from pathlib import Path
+from .config import BS_FAST_DOWNLOAD
 
 async def draw_image(Ranks_datas,old_data,cache_dir,cache_file,data_dir,SS = False):
     avatar = await player_image(player_addr = f"{Ranks_datas['player']['player_avatar']}")
@@ -92,7 +94,7 @@ async def draw_image(Ranks_datas,old_data,cache_dir,cache_file,data_dir,SS = Fal
     improve_acc__font = await loading_font.font_loader(font_size = improve_size)
     difficulty_size = 35
     font_difficulty = await loading_font.font_loader(font_size = difficulty_size, font = 'Teko-Bold')
-    left_and_right_size = 40
+    left_and_right_size = 50
     left_and_right_font = await loading_font.font_loader(font_size = left_and_right_size)
     crop_size = (100, 200, 900, 600)
     song_background_size = (920, 420)
@@ -114,13 +116,32 @@ async def draw_image(Ranks_datas,old_data,cache_dir,cache_file,data_dir,SS = Fal
         else:
             pass
 
+    i = 0
+    Downloads_Fast = False
     for song_name,datas in Ranks_datas['songs'].items():
         # 删掉难度和单手标识
-        song_name = song_name.replace(f"{datas['difficulty']}", '').replace('|', '')
+        song_name = song_name.replace(f"{datas['difficulty']}", '').replace('|', '').replace(f"{datas['id']}", '')
         # 位置计算
         position = await calculation.calculate_position(record = int(datas['position']),change = crop_size[2])
         # 下载歌曲图片
-        song_image = await download_image(total_song = datas['image_url'], cache_dir = cache_dir, save_name = datas['id'],data_dir = Path(data_dir),save_id = datas['id'])
+        if BS_FAST_DOWNLOAD == False:
+            song_image = await download_image(total_song = datas['image_url'], cache_dir = cache_dir, save_name = datas['id'],data_dir = Path(data_dir),save_id = datas['id'])
+        else:
+            if Downloads_Fast != True:
+                asyncio_download = []
+                song_name_list = []
+                for song_name,datas in Ranks_datas['songs'].items():
+                    # (total_song = datas['image_url'], cache_dir = cache_dir, save_name = datas['id'],data_dir = Path(data_dir),save_id = datas['id'])
+                    asyncio_download.append(download_image(total_song=datas['image_url'], cache_dir=cache_dir, save_name=datas['id'], data_dir=Path(data_dir), save_id=datas['id']))
+                    song_name = song_name.replace(f"{datas['difficulty']}", '').replace('|', '')
+                    song_name_list.append(song_name)
+                Downloads_Result = await asyncio.gather(*asyncio_download)
+                Downloads_Fast = True
+            else:
+                pass
+        song_image = Downloads_Result[i]
+        i += 1
+        
         # 处理歌曲图片
         if song_image:
             song_image = song_image.convert('RGBA')
@@ -140,7 +161,7 @@ async def draw_image(Ranks_datas,old_data,cache_dir,cache_file,data_dir,SS = Fal
         copy_id_icon = copy_id_icon.resize(id_icon_size)
         background_image.paste(copy_id_icon, (position[0] + image_size[0] + 10, position[1] + id_icon_size[1] - 15), copy_id_icon)
         # 删除掉api响应中莫名其妙的xxx,确保map id是正确的
-        song_id = datas['id'].replace('x', '')
+        song_id = datas['id'].replace('x', '').strip()
         bs_draw.text((position[0] + image_size[0] + id_icon_size[0] + 10, position[1] + id_size - 7), str(song_id), font=id_font, fill=(123, 209, 225))
         # 歌曲数
         bs_draw.text((position[0] + image_size[0] + id_icon_size[0] + 450 - len(f"#{(int(datas['position']) + 1)}") * 25, position[1] + number_size - 15), f"#{(int(datas['position']) + 1)}", font=font_number, fill=(123, 209, 225))
@@ -175,17 +196,17 @@ async def draw_image(Ranks_datas,old_data,cache_dir,cache_file,data_dir,SS = Fal
             copy_acc_rank_icon = copy_acc_rank_a
             offset = (position[0] + image_size[0] + acc_icon_size[0] + 250, (int(position[1]) + (int(name_size))) + 90)
         background_image.paste(copy_acc_rank_icon, offset, copy_acc_rank_icon)
-        # 准度提升
+        # 准度提升  
         improve_acc = round(float(float(datas['improvement']) * int(100)), 2)
         bs_draw.text((position[0] + image_size[0] + acc_icon_size[0] + 240, (int(position[1]) + (int(name_size) + int(id_size)) // 2) + 105), str( '(+' + str(improve_acc) + '%)'), font=improve_acc__font, fill=(255, 255, 255))
         hand_left = f"{float(datas['accleft']):.2f}"
         # 左手准度
-        bs_draw.text((position[0] + image_size[0] + acc_icon_size[0] + 110 - len(f'{hand_left}') * 20, (int(position[1]) + (int(name_size) + int(id_size)) // 2) + int(left_and_right_size) + 140), str(hand_left), font=left_and_right_font, fill=(255, 51, 51))
+        bs_draw.text((position[0] + image_size[0] + acc_icon_size[0] + 110 - len(f'{hand_left}') * 20 - 80, (int(position[1]) + (int(name_size) + int(id_size)) // 2) + int(left_and_right_size) + 80), str(hand_left), font=left_and_right_font, fill=(255, 51, 51))
         # 小分割线
-        bs_draw.text((position[0] + image_size[0] + acc_icon_size[0] + (left_and_right_size * 3) - 5, (int(position[1]) + (int(name_size) + int(id_size)) // 2) + int(left_and_right_size) + 140), '|', font=left_and_right_font, fill=(255, 255, 255))
+        bs_draw.text((position[0] + image_size[0] + acc_icon_size[0] + (left_and_right_size * 3) - 80, (int(position[1]) + (int(name_size) + int(id_size)) // 2) + int(left_and_right_size) + 80), '|', font=left_and_right_font, fill=(255, 255, 255))
         # 右手准度
         hand_right = f"{float(datas['accright']):.2f}"
-        bs_draw.text((position[0] + image_size[0] + acc_icon_size[0] + left_and_right_size + 90, (int(position[1]) + (int(name_size) + int(id_size)) // 2) + int(left_and_right_size) + 140), str(hand_right), font=left_and_right_font, fill=(100, 103, 254))
+        bs_draw.text((position[0] + image_size[0] + acc_icon_size[0] + left_and_right_size + 90 - 80, (int(position[1]) + (int(name_size) + int(id_size)) // 2) + int(left_and_right_size) + 80), str(hand_right), font=left_and_right_font, fill=(100, 103, 254))
         difficulty_icon_size = (400, 400)
         # 星评难度图标
         if SS == True:
@@ -197,6 +218,8 @@ async def draw_image(Ranks_datas,old_data,cache_dir,cache_file,data_dir,SS = Fal
         background_image.paste(copy_difficulty_icon, (position[0] - (image_size[0] // 2) + 20,  position[1] - (image_size[1] // 2) - 20), copy_difficulty_icon)
         # 绘制星评
         bs_draw.text((position[0] + difficulty_size + 3, position[1]), f"{float(datas['stars']):.2f}", font=font_difficulty, fill=(255, 255, 225))
+
+        
 
     logger.info('图片绘制处理完毕')
     project_size = 80
@@ -226,8 +249,8 @@ async def player_image(player_addr):
             return None
 
 async def download_image(total_song,cache_dir,save_name,data_dir,save_id):
-    save_id = save_id.replace('x', '')
-    save_name = save_name.replace('x', '')
+    save_id = save_id.replace('x', '').strip()
+    save_name = save_name.replace('x', '').strip()
     # 先尝试去打开缓存图片
     try:
         save_image = Image.open(f'{cache_dir}/{save_name}.png').convert('RGBA')

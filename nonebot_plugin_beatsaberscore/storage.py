@@ -1,6 +1,7 @@
 import json
 import re
 from pathlib import Path
+import os
 
 def save_BSid(QQ_id, message,data_dir):
     # 简单粗暴提取数字
@@ -29,6 +30,7 @@ def save_BSid(QQ_id, message,data_dir):
     try:
         with open(json_file_path, 'r', encoding='utf-8') as QQ_list:
             QQ_data = json.load(QQ_list)
+
     except:
         QQ_data = {}
 
@@ -49,6 +51,17 @@ def save_user_data(QQ_id,data_dir,datas,SS = False):
     try:
         with open(user_data_path, 'r', encoding='utf-8') as test:
             all_song_data = json.load(test)
+            # 检测是否是旧Json格式文件 
+            try:
+                error = all_song_data['Old_Json']
+                if error == False:
+                    pass
+            except:
+                os.remove(user_data_path)
+                # 初始化文件数据
+                all_song_data = {}
+                with open(user_data_path, 'w', encoding='utf-8') as test:
+                    json.dump(all_song_data, test, sort_keys=True, indent=4, ensure_ascii=False)
     except:
         # 如果没有文件,则初始化文件数据
         all_song_data = {}

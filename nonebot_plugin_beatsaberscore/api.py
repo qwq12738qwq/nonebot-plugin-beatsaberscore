@@ -41,8 +41,9 @@ async def BL_player_scores(player_id,text = False):
         else:
             OneSaber = ''
         songs = {
-            f"{datas['leaderboard']['song']['name']}{datas['leaderboard']['difficulty']['difficultyName']}{OneSaber}": {
-                'id': f"{datas['leaderboard']['song']['id']}",
+            f"{datas['leaderboard']['song']['name']}{datas['leaderboard']['difficulty']['difficultyName']}{OneSaber}{datas['leaderboard']['song']['id'].replace('x', '').strip()}": 
+            {
+                'id': f"{datas['leaderboard']['song']['id'].replace('x', '').strip()}",
                 'image_url': f"{datas['leaderboard']['song']['coverImage']}",
                 'pp': f"{datas['pp']}",
                 'difficulty': f"{datas['leaderboard']['difficulty']['difficultyName']}",
@@ -108,8 +109,9 @@ async def BL_player_scores(player_id,text = False):
         else:
             improvement = datas['scoreImprovement']['accuracy']
         songs = {
-            f"{datas['leaderboard']['song']['name']}{datas['leaderboard']['difficulty']['difficultyName']}{OneSaber}": {
-                'id': f"{datas['leaderboard']['song']['id']}",
+            f"{datas['leaderboard']['song']['name']}{datas['leaderboard']['difficulty']['difficultyName']}{OneSaber}{datas['leaderboard']['song']['id'].replace('x', '').strip()}": 
+            {
+                'id': f"{datas['leaderboard']['song']['id'].replace('x', '').strip()}",
                 'image_url': f"{datas['leaderboard']['song']['coverImage']}",
                 'pp': f"{pp}",
                 'difficulty': f"{datas['leaderboard']['difficulty']['difficultyName']}",
