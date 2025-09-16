@@ -88,13 +88,13 @@ async def draw_image(Ranks_datas,old_data,cache_dir,cache_file,data_dir,SS = Fal
     font_number = await loading_font.font_loader(font_size = number_size)
     pp_size = 70
     font_pp = await loading_font.font_loader(font_size = pp_size)
-    accuracy_size  = 70
+    accuracy_size  = 75
     accuracy_font = await loading_font.font_loader(font_size = accuracy_size)
-    improve_size = 32
+    improve_size = 40
     improve_acc__font = await loading_font.font_loader(font_size = improve_size)
     difficulty_size = 35
     font_difficulty = await loading_font.font_loader(font_size = difficulty_size, font = 'Teko-Bold')
-    left_and_right_size = 50
+    left_and_right_size = 52
     left_and_right_font = await loading_font.font_loader(font_size = left_and_right_size)
     crop_size = (100, 200, 900, 600)
     song_background_size = (920, 420)
@@ -174,7 +174,7 @@ async def draw_image(Ranks_datas,old_data,cache_dir,cache_file,data_dir,SS = Fal
         background_image.paste(copy_acc_icon, (position[0] + image_size[0] + 10, (int(position[1]) + (int(name_size) + int(id_size)) // 2) + 110), copy_acc_icon)
         # 准度
         accuracy = float(float(datas['accuracy']) * int(100))
-        bs_draw.text((position[0] + image_size[0] + acc_icon_size[0] + 10, (int(position[1]) + (int(name_size) + int(id_size)) // 2) + 110), (f'{(accuracy):.2f}' + '%'), font=accuracy_font, fill=(255, 255, 255))
+        bs_draw.text((position[0] + image_size[0] + acc_icon_size[0], (int(position[1]) + (int(name_size) + int(id_size)) // 2) + 140), (f'{(accuracy):.2f}' + '%'), font=accuracy_font, fill=(255, 255, 255))
         # 准度评级
         offset = (position[0] + image_size[0] + acc_icon_size[0] + 220, (int(position[1]) + (int(name_size))) + 90)
         if accuracy >= int(95):
@@ -198,15 +198,15 @@ async def draw_image(Ranks_datas,old_data,cache_dir,cache_file,data_dir,SS = Fal
         background_image.paste(copy_acc_rank_icon, offset, copy_acc_rank_icon)
         # 准度提升  
         improve_acc = round(float(float(datas['improvement']) * int(100)), 2)
-        bs_draw.text((position[0] + image_size[0] + acc_icon_size[0] + 240, (int(position[1]) + (int(name_size) + int(id_size)) // 2) + 105), str( '(+' + str(improve_acc) + '%)'), font=improve_acc__font, fill=(255, 255, 255))
+        bs_draw.text((position[0] + image_size[0] + acc_icon_size[0] + 150, (int(position[1]) + (int(name_size) + int(id_size)) // 2) + 100), str( '(+' + str(improve_acc) + '%)'), font=improve_acc__font, fill=(255, 255, 255))
         hand_left = f"{float(datas['accleft']):.2f}"
         # 左手准度
-        bs_draw.text((position[0] + image_size[0] + acc_icon_size[0] + 110 - len(f'{hand_left}') * 20 - 80, (int(position[1]) + (int(name_size) + int(id_size)) // 2) + int(left_and_right_size) + 80), str(hand_left), font=left_and_right_font, fill=(255, 51, 51))
+        bs_draw.text((position[0] + image_size[0] + acc_icon_size[0] + 150 - len(f'{hand_left}') * 20 - 115, (int(position[1]) + (int(name_size) + int(id_size)) // 2) + int(left_and_right_size) + 180), str(hand_left), font=left_and_right_font, fill=(255, 51, 51))
         # 小分割线
-        bs_draw.text((position[0] + image_size[0] + acc_icon_size[0] + (left_and_right_size * 3) - 80, (int(position[1]) + (int(name_size) + int(id_size)) // 2) + int(left_and_right_size) + 80), '|', font=left_and_right_font, fill=(255, 255, 255))
+        bs_draw.text((position[0] + image_size[0] + acc_icon_size[0] + (left_and_right_size * 3) - 80, (int(position[1]) + (int(name_size) + int(id_size)) // 2) + int(left_and_right_size) + 190), '/', font=left_and_right_font, fill=(255, 255, 255))
         # 右手准度
         hand_right = f"{float(datas['accright']):.2f}"
-        bs_draw.text((position[0] + image_size[0] + acc_icon_size[0] + left_and_right_size + 90 - 80, (int(position[1]) + (int(name_size) + int(id_size)) // 2) + int(left_and_right_size) + 80), str(hand_right), font=left_and_right_font, fill=(100, 103, 254))
+        bs_draw.text((position[0] + image_size[0] + acc_icon_size[0] + left_and_right_size + 35, (int(position[1]) + (int(name_size) + int(id_size)) // 2) + int(left_and_right_size) + 200), str(hand_right), font=left_and_right_font, fill=(100, 103, 254))
         difficulty_icon_size = (400, 400)
         # 星评难度图标
         if SS == True:

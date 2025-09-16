@@ -60,6 +60,7 @@ def save_user_data(QQ_id,data_dir,datas,SS = False):
                 os.remove(user_data_path)
                 # 初始化文件数据
                 all_song_data = {}
+                all_song_data['Old_Json'] = False
                 with open(user_data_path, 'w', encoding='utf-8') as test:
                     json.dump(all_song_data, test, sort_keys=True, indent=4, ensure_ascii=False)
     except:

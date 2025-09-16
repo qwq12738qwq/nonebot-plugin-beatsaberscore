@@ -8,7 +8,7 @@ class Config(BaseModel):
     bs_timeout: int = Field(default=5)
     superusers: list = Field(default=None)
     bs_limit_cache: int = Field(default=1500)
-    version: str = '1.3.7'
+    version: str = '1.4.3'
     bs_fast_download: bool = Field(default=True)
 
 plugin_config: Config = get_plugin_config(Config)

@@ -1,6 +1,8 @@
 import httpx
 from . import retry
 from nonebot.log import logger
+import asyncio
+from .config import BS_FAST_DOWNLOAD
 
 async def BL_player_scores(player_id,text = False):
     if text == True:
@@ -29,12 +31,13 @@ async def BL_player_scores(player_id,text = False):
     for datas in score_data:
         ster_pp += datas['pp']
         # 解决准度提升无数据问题
-        try:
-            Improvement = datas['scoreImprovement']['accuracy']
-        except:
-            datas['scoreImprovement'] = {}
-            datas['scoreImprovement']['accuracy'] = {}
-            datas['scoreImprovement']['accuracy'] = '0.00'
+        # try:
+        #     Improvement = datas['scoreImprovement']['accuracy']
+        # except:
+        # beatleader已经不给这项数据了
+        datas['scoreImprovement'] = {}
+        datas['scoreImprovement']['accuracy'] = {}
+        datas['scoreImprovement']['accuracy'] = '0.00'
         # 标识歌曲,防止字典冲突
         if datas.get('accLeft') == float(0) or datas.get('accRight') == float(0):
             OneSaber = '|'
@@ -152,6 +155,7 @@ async def SS_player_scores(player_id,text = False,old_data = {}):
     all_data['player'] = {}
     difficulty = id = bpm = ''
     ster_pp = i = 0
+    Fast_Search = False
     for datas in score_data:
         ster_pp += datas['score']['pp']
         # 解决准度提升无数据问题
@@ -184,11 +188,25 @@ async def SS_player_scores(player_id,text = False,old_data = {}):
             id = old_data[f"{datas['leaderboard']['songName']}{difficulty}{OneSaber}"]['id']
             bpm = old_data[f"{datas['leaderboard']['songName']}{difficulty}{OneSaber}"]['bpm']
         except:
-            beatsaver_to_scoresaber = await search_beatsaver(song_hash = datas['leaderboard']['songHash'])
+#            if BS_FAST_DOWNLOAD == False:
+            beatsaver_to_scoresaber = await search_beatsaver(song_hash=datas['leaderboard']['songHash'])
             if beatsaver_to_scoresaber == None:
                 return None
-            id = beatsaver_to_scoresaber['id']
-            bpm = beatsaver_to_scoresaber['metadata']['bpm']
+                id = beatsaver_to_scoresaber['id']
+                bpm = beatsaver_to_scoresaber['metadata']['bpm']
+#            else:
+                # 异步处理
+#                if Fast_Search != True:
+#                    Search_List = []
+#                    for datas in score_data:
+##                        Search_List.append(search_beatsaver(song_hash=datas['leaderboard']['songHash']))
+##                    Search_result = await asyncio.gather(*Search_List)
+#                    Fast_Search = True
+#                else:
+#                    pass
+#            id = Search_result[i]['id']
+#            bpm = Search_result[i]['metadata']['bpm']
+
         songs = {
             f"{datas['leaderboard']['songName']}{difficulty}{OneSaber}": {
                 'id': f"{id}",
