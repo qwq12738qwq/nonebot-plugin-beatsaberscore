@@ -2,6 +2,7 @@ import json
 import re
 from pathlib import Path
 import os
+#import sqlite3
 
 def save_BSid(QQ_id, message,data_dir):
     # 简单粗暴提取数字
@@ -100,4 +101,7 @@ def cache_data(save_id,data_path):
         json.dump(cache_data, use_list, sort_keys=True, indent=4, ensure_ascii=False)
     return
 
+# def Use_DB_Strorage():
+#     cursor = sqlite3.connect("example.db").cursor()
+    
     

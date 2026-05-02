@@ -209,10 +209,12 @@ async def send_BS_Search(bot: Bot,event: GroupMessageEvent):
     if song_rank[0] == True:
         ranking_ScoreSaber = 'ScoreSaber'
         ss_song_star = []
+        ss_song_diffs = []
         for SS_Rank_List in song_information['versions']:
             for SS_Rank in SS_Rank_List['diffs']:
                 SS_Stars = SS_Rank.get('stars')
                 ss_song_star.append(SS_Stars)
+                ss_song_diffs.append(SS_Rank['difficulty'])
 
         #print(SS_Rank_List)
     else:
@@ -255,7 +257,7 @@ async def send_BS_Search(bot: Bot,event: GroupMessageEvent):
     if ranking_ScoreSaber != 'None':
         i = 0
         for star in ss_song_star:
-            ss_rank_star += f'{bl_song_diffs[i]}:★{ss_song_star[i]}\n'
+            ss_rank_star += f'{ss_song_diffs[i]}:★{ss_song_star[i]}\n'
             i += 1
     else:
         ss_rank_star = ''

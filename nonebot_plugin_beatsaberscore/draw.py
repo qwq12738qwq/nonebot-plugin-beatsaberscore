@@ -1,3 +1,4 @@
+from concurrent.futures import ProcessPoolExecutor as ThreadPoolExecutor
 from PIL import Image, ImageDraw
 import httpx
 import asyncio
@@ -117,7 +118,7 @@ async def draw_image(Ranks_datas,old_data,cache_dir,cache_file,data_dir,SS = Fal
             pass
 
     i = 0
-    Downloads_Fast = False
+    Downloads_Fast = False # 判断是否执行过多异步下载
     for song_name,datas in Ranks_datas['songs'].items():
         # 删掉难度和单手标识
         song_name = song_name.replace(f"{datas['difficulty']}", '').replace('|', '').replace(f"{datas['id']}", '')
@@ -181,16 +182,21 @@ async def draw_image(Ranks_datas,old_data,cache_dir,cache_file,data_dir,SS = Fal
             copy_acc_rank_ss_plus = open_acc_rank_ss_plus.copy()
             copy_acc_rank_ss_plus = copy_acc_rank_ss_plus.resize(acc_rank_icon_size)
             copy_acc_rank_icon = copy_acc_rank_ss_plus
-        if int(95) > accuracy >= int(90):
+        elif int(95) > accuracy >= int(90):
             copy_acc_rank_ss = open_acc_rank_ss.copy()
             copy_acc_rank_ss = copy_acc_rank_ss.resize(acc_rank_icon_size)
             copy_acc_rank_icon = copy_acc_rank_ss
-        if int(90) > accuracy >= int(80):
+        elif int(90) > accuracy >= int(80):
             copy_acc_rank_s = open_acc_rank_s.copy()
             copy_acc_rank_s = copy_acc_rank_s.resize(acc_rank_icon_size)
             copy_acc_rank_icon = copy_acc_rank_s
             offset = (position[0] + image_size[0] + acc_icon_size[0] + 250, (int(position[1]) + (int(name_size))) + 90)
-        if int(80) > accuracy >= int(65):
+        elif  int(80) > accuracy >= int(65):
+            copy_acc_rank_a = open_acc_rank_a.copy()
+            copy_acc_rank_a = copy_acc_rank_a.resize(acc_rank_icon_size)
+            copy_acc_rank_icon = copy_acc_rank_a
+            offset = (position[0] + image_size[0] + acc_icon_size[0] + 250, (int(position[1]) + (int(name_size))) + 90)
+        elif int(65) > accuracy:
             copy_acc_rank_a = open_acc_rank_a.copy()
             copy_acc_rank_a = copy_acc_rank_a.resize(acc_rank_icon_size)
             copy_acc_rank_icon = copy_acc_rank_a
@@ -275,3 +281,104 @@ async def download_image(total_song,cache_dir,save_name,data_dir,save_id):
                 return None
         except httpx.RequestError:
             return None
+
+# async def draw_song_image():
+#     # 删掉难度和单手标识
+#     song_name = song_name.replace(f"{datas['difficulty']}", '').replace('|', '').replace(f"{datas['id']}", '')
+#     # 位置计算
+#     position = await calculation.calculate_position(record = int(datas['position']),change = crop_size[2])
+#     # 下载歌曲图片
+#     if BS_FAST_DOWNLOAD == False:
+#         song_image = await download_image(total_song = datas['image_url'], cache_dir = cache_dir, save_name = datas['id'],data_dir = Path(data_dir),save_id = datas['id'])
+#     else:
+#         if Downloads_Fast != True:
+#             asyncio_download = []
+#             song_name_list = []
+#             for song_name,datas in Ranks_datas['songs'].items():
+#                 # (total_song = datas['image_url'], cache_dir = cache_dir, save_name = datas['id'],data_dir = Path(data_dir),save_id = datas['id'])
+#                 asyncio_download.append(download_image(total_song=datas['image_url'], cache_dir=cache_dir, save_name=datas['id'], data_dir=Path(data_dir), save_id=datas['id']))
+#                 song_name = song_name.replace(f"{datas['difficulty']}", '').replace('|', '')
+#                 song_name_list.append(song_name)
+#             Downloads_Result = await asyncio.gather(*asyncio_download)
+#             Downloads_Fast = True
+#         else:
+#             pass
+#     song_image = Downloads_Result[i]
+#     i += 1
+    
+#     # 处理歌曲图片
+#     if song_image:
+#         song_image = song_image.convert('RGBA')
+#         handle_image = corner.handle_corn(image = song_image, size = image_size, corner_radius = 25)
+#         mask_song_image = handle_image.convert('RGBA')
+#         background_image.paste(mask_song_image, (position[0], position[1]), mask_song_image)
+#     else:
+#         pass
+#     # 歌曲名称
+#     if len(song_name) > int(15): # 长名字适当缩短
+#         song_name = song_name[:12] + '..'
+#     else:
+#         pass
+#     bs_draw.text(((position[0] + image_size[0] + 18), position[1] - 25), song_name, font=font_song, fill=(255, 255, 255))
+#     # id图标
+#     copy_id_icon = open_id_icon.copy()
+#     copy_id_icon = copy_id_icon.resize(id_icon_size)
+#     background_image.paste(copy_id_icon, (position[0] + image_size[0] + 10, position[1] + id_icon_size[1] - 15), copy_id_icon)
+#     # 删除掉api响应中莫名其妙的xxx,确保map id是正确的
+#     song_id = datas['id'].replace('x', '').strip()
+#     bs_draw.text((position[0] + image_size[0] + id_icon_size[0] + 10, position[1] + id_size - 7), str(song_id), font=id_font, fill=(123, 209, 225))
+#     # 歌曲数
+#     bs_draw.text((position[0] + image_size[0] + id_icon_size[0] + 450 - len(f"#{(int(datas['position']) + 1)}") * 25, position[1] + number_size - 15), f"#{(int(datas['position']) + 1)}", font=font_number, fill=(123, 209, 225))
+#     # PP信息
+#     pp_weight_calculate = str(str(f"{(float(datas['pp']) * float(datas['weight'])):.2f}")) # 计算权重
+#     bs_draw.text((position[0] + image_size[0] + 10, position[1] + id_icon_size[1] + 45), f"{float(datas['pp']):.2f}>>{pp_weight_calculate}", font=font_pp, fill=(94, 255, 223))
+#     # acc图标
+#     copy_acc_icon = open_acc_icon.copy()
+#     copy_acc_icon = copy_acc_icon.resize(acc_icon_size)
+#     background_image.paste(copy_acc_icon, (position[0] + image_size[0] + 10, (int(position[1]) + (int(name_size) + int(id_size)) // 2) + 110), copy_acc_icon)
+#     # 准度
+#     accuracy = float(float(datas['accuracy']) * int(100))
+#     bs_draw.text((position[0] + image_size[0] + acc_icon_size[0], (int(position[1]) + (int(name_size) + int(id_size)) // 2) + 140), (f'{(accuracy):.2f}' + '%'), font=accuracy_font, fill=(255, 255, 255))
+#     # 准度评级
+#     offset = (position[0] + image_size[0] + acc_icon_size[0] + 220, (int(position[1]) + (int(name_size))) + 90)
+#     if accuracy >= int(95):
+#         copy_acc_rank_ss_plus = open_acc_rank_ss_plus.copy()
+#         copy_acc_rank_ss_plus = copy_acc_rank_ss_plus.resize(acc_rank_icon_size)
+#         copy_acc_rank_icon = copy_acc_rank_ss_plus
+#     if int(95) > accuracy >= int(90):
+#         copy_acc_rank_ss = open_acc_rank_ss.copy()
+#         copy_acc_rank_ss = copy_acc_rank_ss.resize(acc_rank_icon_size)
+#         copy_acc_rank_icon = copy_acc_rank_ss
+#     if int(90) > accuracy >= int(80):
+#         copy_acc_rank_s = open_acc_rank_s.copy()
+#         copy_acc_rank_s = copy_acc_rank_s.resize(acc_rank_icon_size)
+#         copy_acc_rank_icon = copy_acc_rank_s
+#         offset = (position[0] + image_size[0] + acc_icon_size[0] + 250, (int(position[1]) + (int(name_size))) + 90)
+#     if int(80) > accuracy >= int(65):
+#         copy_acc_rank_a = open_acc_rank_a.copy()
+#         copy_acc_rank_a = copy_acc_rank_a.resize(acc_rank_icon_size)
+#         copy_acc_rank_icon = copy_acc_rank_a
+#         offset = (position[0] + image_size[0] + acc_icon_size[0] + 250, (int(position[1]) + (int(name_size))) + 90)
+#     background_image.paste(copy_acc_rank_icon, offset, copy_acc_rank_icon)
+#     # 准度提升  
+#     improve_acc = round(float(float(datas['improvement']) * int(100)), 2)
+#     bs_draw.text((position[0] + image_size[0] + acc_icon_size[0] + 150, (int(position[1]) + (int(name_size) + int(id_size)) // 2) + 100), str( '(+' + str(improve_acc) + '%)'), font=improve_acc__font, fill=(255, 255, 255))
+#     hand_left = f"{float(datas['accleft']):.2f}"
+#     # 左手准度
+#     bs_draw.text((position[0] + image_size[0] + acc_icon_size[0] + 150 - len(f'{hand_left}') * 20 - 115, (int(position[1]) + (int(name_size) + int(id_size)) // 2) + int(left_and_right_size) + 180), str(hand_left), font=left_and_right_font, fill=(255, 51, 51))
+#     # 小分割线
+#     bs_draw.text((position[0] + image_size[0] + acc_icon_size[0] + (left_and_right_size * 3) - 80, (int(position[1]) + (int(name_size) + int(id_size)) // 2) + int(left_and_right_size) + 190), '/', font=left_and_right_font, fill=(255, 255, 255))
+#     # 右手准度
+#     hand_right = f"{float(datas['accright']):.2f}"
+#     bs_draw.text((position[0] + image_size[0] + acc_icon_size[0] + left_and_right_size + 35, (int(position[1]) + (int(name_size) + int(id_size)) // 2) + int(left_and_right_size) + 200), str(hand_right), font=left_and_right_font, fill=(100, 103, 254))
+#     difficulty_icon_size = (400, 400)
+#     # 星评难度图标
+#     if SS == True:
+#         open_difficulty_icon = Image.open(f"{Path(__file__).parent}/static/ScoreSaber/{datas['difficulty']}.png").convert('RGBA')
+#     else:
+#         open_difficulty_icon = Image.open(f"{Path(__file__).parent}/static/BeatLeader/{datas['difficulty']}.png").convert('RGBA')
+#     copy_difficulty_icon = open_difficulty_icon.copy()
+#     copy_difficulty_icon = copy_difficulty_icon.resize(difficulty_icon_size)
+#     background_image.paste(copy_difficulty_icon, (position[0] - (image_size[0] // 2) + 20,  position[1] - (image_size[1] // 2) - 20), copy_difficulty_icon)
+#     # 绘制星评
+#     bs_draw.text((position[0] + difficulty_size + 3, position[1]), f"{float(datas['stars']):.2f}", font=font_difficulty, fill=(255, 255, 225))
